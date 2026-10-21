@@ -149,6 +149,11 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .scanframe{position:relative;height:210px;border-radius:14px;background:var(--block);display:grid;place-items:center;color:var(--muted);font-size:12px;text-align:center;padding:0 48px}.scanframe::before{content:"";position:absolute;inset:28px 24px;border:2px dashed var(--muted);border-radius:10px;opacity:.5}
 .thumbs{display:flex;gap:10px}.thumb{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}.thumb.done{color:var(--fg);border-color:var(--fg)}.thumb b{font-weight:500}
 .switch{width:44px;height:26px;border-radius:13px;background:var(--block2);padding:3px;flex:none;display:flex}.switch i{width:20px;height:20px;border-radius:50%;background:var(--bg)}.switch.on{background:var(--fg);justify-content:flex-end}
+/* capture mode: bare phone, full-length screens, menu clamped to one phone height */
+body.capture{background:#fff;padding:0;display:block}body.capture .stage{display:none}
+body.capture .phone{width:393px;height:auto;min-height:852px;max-width:none;aspect-ratio:auto;border:0;border-radius:0;box-shadow:none;overflow:visible}
+body.capture .screen{position:relative;inset:auto;min-height:852px}body.capture .content{overflow:visible;flex:none}body.capture .hscroll{overflow:hidden}
+body.capture .phone:has(.drawer){height:852px;overflow:hidden}
 button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 </style>
 </head>
@@ -322,7 +327,7 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     ob4: () => { const id = state.manual ? {} : {tag:'From your ID'};
       return `${obHead(4)}<div class="content">${obTitle(4, state.manual?'As they appear on your official ID.':'We read these from your ID. Check they’re right.')}
       ${fld('CURP','LOMF900312MDFPRR08',id)}${fld('RFC','LOMF900312AB1',{tag:'From your CURP'})}
-      <div class="two">${fld('Date of birth','12 Mar 1990',id)}${fld('Nationality','Mexican',{select:true})}</div>
+      ${fld('Date of birth','12 March 1990',id)}${fld('Nationality','Mexican',{select:true})}
       <div class="label">Address</div>
       ${fld('Street and number','Av. Insurgentes Sur 1234, Int. 5',id)}<div class="two">${fld('Postcode','03100',id)}${fld('Neighbourhood','Del Valle',{select:true})}</div>${fld('Municipality and state','Benito Juárez, CDMX',{hint:'Filled in from the postcode'})}
       ${state.proof ? `<button class="upload done" data-act="obUpload"><span><b style="font-weight:500">proof-of-address.pdf</b><br><small>1.2 MB · uploaded</small></span><span class="tag">Replace</span></button>`
@@ -623,6 +628,17 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     if (a==='receipt'){ push('receipt'); return; }
     if (a==='copy'){ try{ navigator.clipboard.writeText('002180001234567890').catch(()=>{}); }catch(_){} t.textContent='Copied'; setTimeout(()=>{t.textContent='Copy CLABE';},1200); return; }
   });
+  // Deep links for review and Figma capture: ?screen=name.key=value.key=value (chk takes a|b|c), &capture renders a bare 393-wide phone at full length
+  const P = new URLSearchParams(location.search), SC = P.get('screen');
+  if (P.has('capture')) document.body.classList.add('capture');
+  if (SC){ const [name, ...opts] = SC.split('.');
+    for (const o of opts){ const [k,v] = o.split('='); if (k==='chk') v.split('|').forEach(c=>state.chk[c]=true); else state[k] = isNaN(v) ? v : Number(v); }
+    const onboarding = name==='welcome' || name==='prospect' || name==='locked' || name.startsWith('ob');
+    if (!P.get('screen').includes('mode=')) state.mode = onboarding ? 'prospect' : 'client';
+    if (state.menu) drawer = true;
+    if (screens[name]) stack = name==='home' || name==='welcome' || name==='prospect' ? [name] : [onboarding?'welcome':'home', name];
+  }
+  if (location.hash.includes('figmacapture')){ const sc = document.createElement('script'); sc.src = 'https://mcp.figma.com/mcp/html-to-design/capture.js'; sc.async = true; document.head.appendChild(sc); }
   render();
 })();
 </script>
