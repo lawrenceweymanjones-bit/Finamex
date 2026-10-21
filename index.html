@@ -63,7 +63,6 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
 .card.filled{background:var(--block);border-color:transparent}
 .kv{display:flex;justify-content:space-between;gap:12px;font-size:14px}.kv span:first-child{color:var(--muted)}.kv.b span{color:var(--fg);font-weight:500}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}.grid2 div small{display:block;color:var(--muted);font-size:12px}.grid2 div b{font-weight:500;font-size:16px}
 .btn{font:inherit;font-weight:500;font-size:15px;border-radius:999px;padding:16px 20px;border:1.5px solid var(--fg);background:var(--fg);color:var(--bg);cursor:pointer;width:100%}
 .btn.sec{background:var(--bg);color:var(--fg)}
 .btn:disabled{opacity:.35;cursor:default}
@@ -126,7 +125,7 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .ctoggle{--tb:var(--block);width:40px;height:40px;flex:none;border-radius:50%;border:0;background:var(--block);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0}.ctoggle svg{width:18px;height:18px}
 .ctoggle.on{--tb:var(--fg);background:var(--fg);color:var(--bg)}
 .card.stats{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px;padding:20px}.stats div{display:flex;flex-direction:column;gap:4px;min-width:0}
-.stats small{color:var(--muted);font-size:12px}.stats b{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stats small{color:var(--muted);font-size:12px}.stats b{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums}
 .hbars{display:flex;flex-direction:column;gap:8px}.stack{display:flex;gap:2px;height:12px;border-radius:6px;overflow:hidden}.stack i{display:block;background:var(--fg)}
 .row .sw{width:10px;height:10px;border-radius:50%;background:var(--fg);flex:none}
 button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
@@ -278,7 +277,7 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
       ${hero('Last auction rate','9.85%','Next auction Tue 27 Oct · orders close 13:00')}
       ${chart('inst',{seed:23,h:140,base:9.85,spread:0.12,vol:1.4,drift:-0.02,fmt:v=>v.toFixed(2)+'%'})}
       ${segs(['1M','3M','6M','1Y','MAX'],state.range||'1Y','range')}
-      <div class="card"><div class="grid2"><div><small>Term</small><b>28 days</b></div><div><small>Matures</small><b>24 Nov 2026</b></div><div><small>Minimum</small><b>$100</b></div><div><small>Liquidity</small><b>Sell before maturity</b></div><div><small>Buy window</small><b>9:00–13:00</b></div><div><small>Auto-reinvest</small><b>On by default</b></div></div></div>
+      <div class="card stats"><div><small>Term</small><b>28 days</b></div><div><small>Matures</small><b>24 Nov 2026</b></div><div><small>Minimum</small><b>$100</b></div><div><small>Liquidity</small><b>Sell before maturity</b></div><div><small>Buy window</small><b>9:00–13:00</b></div><div><small>Auto-reinvest</small><b>On by default</b></div></div>
       <button class="card filled" data-act="position" style="font:inherit;text-align:left;cursor:pointer;color:var(--fg)"><span style="color:var(--muted);font-size:12px">You hold</span>${kv('$120,000 in 28-day Cetes','View position ›',true)}</button>
       <div class="label">How it works</div>
       <p class="note" style="font-size:13px">Government debt bought at auction and paid back at face value on maturity. The return is the discount.</p>
@@ -341,7 +340,7 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     position: () => `${status()}${topbar('',{back:true,noBell:true,action:'···'})}<div class="content tight">
       <div><div style="color:var(--muted);font-size:13px">Dollars</div><div style="font-size:24px;font-weight:500">US dollar</div></div>
       ${hero('Value in pesos','$185,000','+$4,350 (2.4%) since you bought')}
-      <div class="card"><div class="grid2"><div><small>You hold</small><b>USD 10,000</b></div><div><small>Average cost</small><b>$18.07</b></div><div><small>Current rate</small><b>$18.50 sell</b></div><div><small>Unrealised gain</small><b>+$4,350</b></div></div></div>
+      <div class="card stats"><div><small>You hold</small><b>USD 10,000</b></div><div><small>Average cost</small><b>$18.07</b></div><div><small>Current rate</small><b>$18.50 sell</b></div><div><small>Unrealised gain</small><b>+$4,350</b></div></div>
       ${chart('pos',{seed:41,h:130,base:185000,spread:0.09,fmt:money})}
       ${segs(['1W','1M','3M','1Y','MAX'],state.range||'1Y','range')}
       <div class="label">History</div>
