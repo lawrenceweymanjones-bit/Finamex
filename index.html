@@ -145,6 +145,10 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .content.wl{justify-content:center;gap:20px}.wl .brand{font-size:24px;font-weight:500}.wl .box{height:260px;border-radius:16px;flex:none}.wl h2{font-size:26px;font-weight:500;margin:0;line-height:1.2}.wl p{margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.45}
 .dots{display:flex;gap:6px}.dots button{width:8px;height:8px;border-radius:4px;border:0;background:var(--block2);padding:0;cursor:pointer}.dots button.on{background:var(--fg);width:20px}
 .footer.col{flex-direction:column}.linkbtn{background:none;border:0;font:inherit;font-size:14px;color:var(--fg);cursor:pointer;padding:6px;text-decoration:underline;text-underline-offset:3px}
+.stages{display:flex;gap:8px;width:100%}.stg{display:flex;flex-direction:column;gap:6px;min-width:0}.stg small{font-size:11px;color:var(--muted)}.stg.cur small{color:var(--fg);font-weight:500}
+.scanframe{position:relative;height:210px;border-radius:14px;background:var(--block);display:grid;place-items:center;color:var(--muted);font-size:12px;text-align:center;padding:0 48px}.scanframe::before{content:"";position:absolute;inset:28px 24px;border:2px dashed var(--muted);border-radius:10px;opacity:.5}
+.thumbs{display:flex;gap:10px}.thumb{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}.thumb.done{color:var(--fg);border-color:var(--fg)}.thumb b{font-weight:500}
+.switch{width:44px;height:26px;border-radius:13px;background:var(--block2);padding:3px;flex:none;display:flex}.switch i{width:20px;height:20px;border-radius:50%;background:var(--bg)}.switch.on{background:var(--fg);justify-content:flex-end}
 button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 </style>
 </head>
@@ -249,10 +253,14 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
   ];
 
   // Onboarding: eight steps; obStep is the furthest step reached, so Save & exit / Continue resume there
-  const OB = ['Create your account','Verify your phone','About you','Work &amp; income','Your investing plans','Your address','Your bank account','Review &amp; sign'];
+  const OB = ['Create your account','Verify your phone','Scan your ID','Check your details','Work &amp; income','Your investing plans','Your bank account','Review &amp; sign'];
+  // three stages so eight steps read as You → Your money → Sign
+  const STAGES = [['You',[1,2,3,4]],['Your money',[5,6,7]],['Sign',[8]]];
+  const stageOf = n => STAGES.findIndex(st=>st[1].includes(n));
+  const stageBar = (upTo, cur) => `<span class="stages">${STAGES.map((st,i)=>`<span class="stg ${i===cur?'cur':''}" style="flex:${st[1].length}"><span class="segbar">${st[1].map(k=>`<i class="${k<=upTo?'on':''}"></i>`).join('')}</span><small>${st[0]}</small></span>`).join('')}</span>`;
   const SLIDES = [['Invest from $100','Government Cetes, funds, stocks and dollars, all in one app.'],['Your money, working in Mexico’s markets','Track every position and goal in one place.'],['Open your account in about 10 minutes','Have your ID, a recent proof of address and your bank CLABE ready.']];
   const obHead = n => `${status()}${topbar('',{back:true,noBell:true,action:'Save &amp; exit',actionAct:'obSave:'+n})}`;
-  const obTitle = (n, sub) => `<div class="obprog"><span>Step ${n} of ${OB.length}</span><span class="segbar">${OB.map((_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</span></div><div class="obh"><h2>${OB[n-1]}</h2>${sub?`<p>${sub}</p>`:''}</div>`;
+  const obTitle = (n, sub) => `<div class="obprog">${stageBar(n, stageOf(n))}</div><div class="obh"><h2>${OB[n-1]}</h2>${sub?`<p>${sub}</p>`:''}</div>`;
   const obNext = (n, label, ok=true) => `<div class="footer plain"><button class="btn" data-act="obNext:${n}" ${ok?'':'disabled'}>${label||'Continue'}</button></div>`;
   const fld = (label, value, o={}) => `<div class="field"><label>${label}</label><div class="in ${value?'':'ph'}">${value||o.ph||''}${o.select?'<span>⌄</span>':''}${o.tag?`<span class="tag">${o.tag}</span>`:''}</div>${o.hint?`<small>${o.hint}</small>`:''}</div>`;
   const chk = (key, label) => `<button class="chk ${state.chk[key]?'on':''}" data-chk="${key}"><i>${state.chk[key]?'✓':''}</i><span>${label}</span></button>`;
@@ -270,6 +278,13 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
       <span class="box" style="height:200px">Location illustration</span>
       <div class="obh"><h2>Allow location to continue</h2><p>We confirm you’re in Mexico before opening your account, and each time you sign in.</p></div>
     </div><div class="footer plain col"><button class="btn" data-act="obAllow">Allow location</button><button class="btn sec" data-act="obDeny">Not now</button></div>`,
+
+    obPrep: () => `${status()}${topbar('',{back:true,noBell:true})}<div class="content">
+      <div class="obh"><h2>What you’ll need</h2><p>About 10 minutes. You can save and finish later at any point.</p></div>
+      <div class="list">${[['Your official ID','INE or passport. We’ll scan it to fill in your details'],['Proof of address','Utility bill or bank statement from the last 3 months'],['Your bank CLABE','18 digits, from an account in your name']].map(r=>row(r[0],r[1],'','',{icon:true,chev:false})).join('')}</div>
+      <div class="obprog">${stageBar(0,-1)}</div>
+      <p class="note">Three short stages: about you, your money, then sign.</p>
+    </div><div class="footer plain"><button class="btn" data-act="obPrepGo">I’m ready</button></div>`,
 
     obNoLoc: () => `${status()}${topbar('',{back:true,noBell:true})}<div class="content">
       <div class="success"><i></i><b>Location is off</b><span>We can’t open your account without confirming your location. Turn it on in Settings, then try again.</span></div>
@@ -294,28 +309,36 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
       <div class="keypad">${['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>k?`<button data-otp="${k}">${k}</button>`:'<span></span>').join('')}</div>
     </div>${obNext(2,'Verify',state.otp>=5)}`,
 
-    ob3: () => `${obHead(3)}<div class="content">${obTitle(3,'As it appears on your official ID.')}
-      ${fld('CURP','LOMF900312MDFPRR08')}${fld('RFC','LOMF900312AB1',{tag:'From your CURP'})}
-      ${fld('Date of birth','12 March 1990')}${fld('Nationality','Mexican',{select:true})}${fld('State of birth','Ciudad de México',{select:true})}
-    </div>${obNext(3)}`,
+    ob3: () => { const sc = state.scan||0, pass = state.idType==='Passport';
+      // an INE needs front and back; a passport only its photo page
+      const sides = pass ? ['Photo page'] : ['Front','Back'], done = sc>=sides.length, next = (sides[sc]||'').toLowerCase();
+      return `${obHead(3)}<div class="content">${obTitle(3,'We’ll read your details from it, so there’s less to type.')}
+      ${segs(['INE','Passport'],pass?'Passport':'INE','idType')}
+      <div class="scanframe"><span>${done?'All set, we’ve read your ID':`Place the ${next} of your ${pass?'passport':'INE'} in the frame`}</span></div>
+      <div class="thumbs">${sides.map((x,i)=>`<span class="thumb ${sc>i?'done':''}">${x}<b>${sc>i?'✓':''}</b></span>`).join('')}</div>
+      <button class="linkbtn" data-act="obManual">Enter my details by hand instead</button>
+    </div><div class="footer plain">${done?`<button class="btn" data-act="obNext:3">Continue</button>`:`<button class="btn" data-act="obScan">Take photo of ${next}</button>`}</div>`; },
 
-    ob4: () => `${obHead(4)}<div class="content">${obTitle(4,'We’re required to ask where your money comes from.')}
+    ob4: () => { const id = state.manual ? {} : {tag:'From your ID'};
+      return `${obHead(4)}<div class="content">${obTitle(4, state.manual?'As they appear on your official ID.':'We read these from your ID. Check they’re right.')}
+      ${fld('CURP','LOMF900312MDFPRR08',id)}${fld('RFC','LOMF900312AB1',{tag:'From your CURP'})}
+      <div class="two">${fld('Date of birth','12 Mar 1990',id)}${fld('Nationality','Mexican',{select:true})}</div>
+      <div class="label">Address</div>
+      ${fld('Street and number','Av. Insurgentes Sur 1234, Int. 5',id)}<div class="two">${fld('Postcode','03100',id)}${fld('Neighbourhood','Del Valle',{select:true})}</div>${fld('Municipality and state','Benito Juárez, CDMX',{hint:'Filled in from the postcode'})}
+      ${state.proof ? `<button class="upload done" data-act="obUpload"><span><b style="font-weight:500">proof-of-address.pdf</b><br><small>1.2 MB · uploaded</small></span><span class="tag">Replace</span></button>`
+        : `<button class="upload" data-act="obUpload"><b style="font-weight:500">Upload proof of address</b><small>Utility bill or bank statement under 3 months old · PDF, JPG or PNG</small></button>`}
+    </div>${obNext(4,'Continue',!!state.proof)}`; },
+
+    ob5: () => `${obHead(5)}<div class="content">${obTitle(5,'We’re required to ask where your money comes from.')}
       ${fld('Occupation','Employee · private sector',{select:true})}${fld('Main source of income','Salary',{select:true})}${fld('Source of the funds you’ll invest','Savings',{select:true})}
-    </div>${obNext(4)}`,
+    </div>${obNext(5)}`,
 
-    ob5: () => `${obHead(5)}<div class="content">${obTitle(5,'A rough idea is fine. You can change this later.')}
+    ob6: () => `${obHead(6)}<div class="content">${obTitle(6,'A rough idea is fine. You can change this later.')}
       <div class="label">How much do you expect to invest?</div>
       <div class="opts">${['Up to $50,000','$50,000 – $250,000','$250,000 – $1,000,000','More than $1,000,000'].map(o=>opt('plan',o)).join('')}</div>
       <div class="label">How often will you deposit or withdraw?</div>
       <div class="opts">${['1–2 times a month','3–5 times a month','More than 5 times a month'].map(o=>opt('freq',o)).join('')}</div>
-    </div>${obNext(5,'Continue',!!(state.plan&&state.freq))}`,
-
-    ob6: () => `${obHead(6)}<div class="content">${obTitle(6,'Where you live now.')}
-      ${fld('Street and number','Av. Insurgentes Sur 1234, Int. 5')}<div class="two">${fld('Postcode','03100')}${fld('Neighbourhood','Del Valle',{select:true})}</div>${fld('Municipality and state','Benito Juárez, CDMX')}
-      <div class="label">Proof of address</div>
-      ${state.proof ? `<button class="upload done" data-act="obUpload"><span><b style="font-weight:500">proof-of-address.pdf</b><br><small>1.2 MB · uploaded</small></span><span class="tag">Replace</span></button>`
-        : `<button class="upload" data-act="obUpload"><b style="font-weight:500">Upload proof of address</b><small>Utility bill or bank statement under 3 months old · PDF, JPG or PNG</small></button>`}
-    </div>${obNext(6,'Continue',!!state.proof)}`,
+    </div>${obNext(6,'Continue',!!(state.plan&&state.freq))}`,
 
     ob7: () => `${obHead(7)}<div class="content">${obTitle(7,'You’ll withdraw to this account. It must be in your name.')}
       ${fld('18-digit CLABE','0121 8000 1234 5678 90',{tag:'BBVA'})}${fld('Account holder','María Fernanda López')}
@@ -324,20 +347,22 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 
     ob8: () => { const ok = ['true','own','agree'].every(k=>state.chk[k]);
       return `${obHead(8)}<div class="content">${obTitle(8,'Check your details, then sign to open your account.')}
-      <div class="list">${[[3,'About you','CURP · RFC · date of birth'],[4,'Work &amp; income','Employee · salary · savings'],[5,'Investing plans',state.plan||'Not answered'],[6,'Address','Benito Juárez, CDMX'],[7,'Bank account','BBVA ···5678 90']].map(r=>row(r[1],r[2],'','Edit',{act:'obEdit:'+r[0]})).join('')}</div>
+      <div class="list">${[[4,'About you','CURP · RFC · Benito Juárez, CDMX'],[5,'Work &amp; income','Employee · salary · savings'],[6,'Investing plans',state.plan||'Not answered'],[7,'Bank account','BBVA ···5678 90']].map(r=>row(r[1],r[2],'','Edit',{act:'obEdit:'+r[0]})).join('')}</div>
       <div class="list">${row('Read your contract','PDF · 12 pages','','',{act:'none'})}</div>
       ${chk('true','The information I’ve given is true')}${chk('own','I’m acting on my own behalf')}${chk('agree','I accept the account agreement')}
     </div>${obNext(8,'Sign and open account',ok)}`; },
 
     obDone: () => `${status()}<div class="topbar"><h1></h1></div><div class="content">
-      <div class="success"><i></i><b>Your account is open</b><span>Contract C100504445</span></div>
-      <div class="list">${row('Add money','Transfer from your bank with SPEI','','',{act:'obFund'})}${row('Turn on Face ID','Sign in faster','','',{act:'none'})}</div>
-    </div><div class="footer plain col"><button class="btn" data-act="obFund">Add money</button><button class="btn sec" data-act="obFinish">Go to Home</button></div>`,
+      <div class="success"><i></i><b>Your account is open</b><span>Contract C100504445 · last step: add money to start investing</span></div>
+      <div class="card filled"><span style="color:var(--muted);font-size:12px">Transfer from your bank with SPEI to</span><b style="font-size:20px;font-weight:500;font-variant-numeric:tabular-nums">0021 8000 1234 5678 90</b><span style="color:var(--muted);font-size:12px">Finamex · María Fernanda López</span><button class="btn sec" data-act="copy">Copy CLABE</button></div>
+      <button class="row" data-act="obNotify"><span class="t"><b>Tell me when it arrives</b><small>Usually within minutes during banking hours</small></span><span class="switch ${state.notify?'on':''}"><i></i></span></button>
+      ${state.plan?`<p class="note">You said you’d invest ${state.plan.toLowerCase()}. Cetes start from $100.</p>`:''}
+    </div><div class="footer plain col"><button class="btn" data-act="obFinish">Go to Home</button><button class="linkbtn" data-act="obFinish">I’ll add money later</button></div>`,
 
     prospect: () => `${status()}${topbar('Finamex')}<div class="content home">
       <section class="mod"><button class="setup" data-act="obContinue"><span class="tag">Finish setting up</span><h4>${OB.length-state.obStep+1} steps until you can invest</h4>
-        <span class="segbar">${OB.map((_,i)=>`<i class="${i<state.obStep-1?'on':''}"></i>`).join('')}</span>
-        <p>Next: ${OB[state.obStep-1]} · about ${Math.max(2,(OB.length-state.obStep+1)*1)} min</p><span class="btn">Continue set-up</span></button></section>
+        ${stageBar(state.obStep-1, stageOf(state.obStep))}
+        <p>Next: ${OB[state.obStep-1]} · about ${OB.length-state.obStep+2} min</p><span class="btn">Continue set-up</span></button></section>
       <section class="mod"><div class="home-head">${hero('Total value','$0.00','Open your account to start investing')}</div>
         <div class="qa locked"><button data-act="locked"><i></i>Deposit</button><button data-act="locked"><i></i>Withdraw</button><button data-act="locked"><i></i>Invest</button></div></section>
       <section class="mod"><div class="card filled"><h4>Not ready yet?</h4><p>Look around a demo account with sample data. Nothing you do there is real.</p><button class="btn sec" data-act="demo">Explore a demo account</button></div></section>
@@ -559,14 +584,15 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     if (t.dataset.tab){ go(t.dataset.tab); return; }
     if (t.dataset.cat){ state.cat = t.dataset.cat; render(); return; }
     if (t.dataset.term){ state.term = t.dataset.term; render(); return; }
-    if (t.dataset.seg){ const [k,v]=t.dataset.seg.split(':'); if(k==='side') state.side=v; if(k==='seg') state.seg=v; if(k==='act') state.act=v; if(k==='range') state.range=v; if(k==='ctype') state.ctype=v; render(); return; }
+    if (t.dataset.seg){ const [k,v]=t.dataset.seg.split(':'); if(k==='side') state.side=v; if(k==='seg') state.seg=v; if(k==='act') state.act=v; if(k==='range') state.range=v; if(k==='ctype') state.ctype=v; if(k==='idType'){ state.idType=v; state.scan=0; } render(); return; }
     if (t.dataset.key){ const k=t.dataset.key; if(k==='⌫') state.amount=state.amount.slice(0,-1); else if(state.amount.length<9) state.amount=(state.amount==='0'?'':state.amount)+k; render(); return; }
     if (t.dataset.code){ const k=t.dataset.code; if(k==='⌫') state.code=Math.max(0,state.code-1); else state.code=Math.min(5,state.code+1); render(); return; }
     const a = t.dataset.act;
     if (a==='back'){ pop(); return; }
     // onboarding
     if (a==='obStart'){ state.mode='prospect'; drawer=false; stack=['welcome','obLocation']; render('push'); return; }
-    if (a==='obAllow'){ push('ob1'); return; }
+    if (a==='obAllow'){ push('obPrep'); return; }
+    if (a==='obPrepGo'){ push('ob1'); return; }
     if (a==='obDeny'){ push('obNoLoc'); return; }
     if (a==='obWelcome'){ go('welcome'); return; }
     if (a.startsWith('obNext:')){ const n=Number(a.split(':')[1]); state.obStep=Math.max(state.obStep, Math.min(OB.length, n+1)); push(n<OB.length ? 'ob'+(n+1) : 'obDone'); return; }
@@ -574,6 +600,9 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     if (a.startsWith('obEdit:')){ push('ob'+a.split(':')[1]); return; }
     if (a==='obContinue'){ stack=['prospect','ob'+state.obStep]; render('push'); return; }
     if (a==='obUpload'){ state.proof=true; render(); return; }
+    if (a==='obScan'){ state.scan=(state.scan||0)+1; render(); return; }
+    if (a==='obManual'){ state.manual=true; state.scan=0; state.obStep=Math.max(state.obStep,4); push('ob4'); return; }
+    if (a==='obNotify'){ state.notify=!state.notify; render(); return; }
     if (a==='obFinish'){ state.mode='client'; go('home'); return; }
     if (a==='obFund'){ state.mode='client'; stack=['home','deposit']; render('push'); return; }
     if (a==='demo'){ state.mode='demo'; go('home'); return; }
