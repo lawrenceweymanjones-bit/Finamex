@@ -89,7 +89,6 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .chart .tip b{font-weight:500;font-size:14px;font-variant-numeric:tabular-nums}.chart .tip small{opacity:.7}
 .chart .chg{position:absolute;right:16px;bottom:0;background:var(--block);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}.chart .chg small{color:var(--muted);font-weight:400;margin-left:4px}.chart .chg.neg{text-decoration:none}
 .delta{display:flex;align-items:center;gap:8px;font-size:14px}.delta b{font-weight:500}.delta small{color:var(--muted);font-size:14px}.delta::before{content:"";width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:6px solid var(--fg)}
-.cashrow{display:flex;align-items:center;justify-content:space-between;gap:12px}.cashrow .btn{width:auto;padding:12px 24px}
 .goal{display:flex;flex-direction:column;gap:8px;padding:12px 0;border-bottom:1px solid var(--line);background:none;border-left:0;border-right:0;border-top:0;font:inherit;color:var(--fg);text-align:left;cursor:pointer;width:100%}.goal:last-child{border-bottom:0}
 .goal .hd{display:flex;justify-content:space-between;gap:12px}.goal .hd b{font-weight:500;font-size:15px}.goal .hd span{color:var(--muted);font-variant-numeric:tabular-nums}
 .goal .bar{height:8px;border-radius:4px;background:var(--block2);overflow:hidden}.goal .bar i{display:block;height:100%;background:var(--fg)}
@@ -324,7 +323,6 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
       ${segs(['1W','1M','3M','6M','YTD','1Y','MAX'],state.range||'1Y','range')}
       <div class="sect"><h3>Goals</h3><button data-act="none">New goal</button></div>
       <div class="list">${goals.map(goal).join('')}</div>
-      <div class="cashrow"><div><div style="color:var(--muted);font-size:13px">Available cash</div><div style="font-size:24px;font-weight:500;font-variant-numeric:tabular-nums">$65,797</div></div><button class="btn" data-act="deposit">Deposit</button></div>
       <div class="sect"><h3>Positions</h3></div>
       ${hbars(positions)}
       <div class="list">${row('Statements &amp; tax documents','','','',{act:'none'})}</div>
