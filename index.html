@@ -124,6 +124,7 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .content > .sect:not(:first-child),.content > .label:not(:first-child){margin-top:16px}
 .content > .sect,.content > .label{margin-bottom:-4px}
 :is(.sect,.label) + .list > :is(.row,.goal):first-child{padding-top:4px}
+.content.home{padding-top:24px}.home-head{display:flex;flex-direction:column;gap:20px;margin-bottom:12px}.home-head .hero .v{margin:6px 0 2px}
 button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 </style>
 </head>
@@ -197,8 +198,8 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 
   const screens = {
     home: () => `${status()}${topbar('Finamex')}<div class="content home">
-      <section class="mod"><div style="color:var(--muted);font-size:13px">Contract C100504445 ⌄</div>
-      ${hero('Total value','$2,345,600','+$12,400 (0.5%) today')}
+      <section class="mod"><div class="home-head"><div style="color:var(--muted);font-size:13px">Contract C100504445 ⌄</div>
+      ${hero('Total value','$2,345,600','+$12,400 (0.5%) today')}</div>
       ${chart('home',{seed:7,h:56,range:'1M',base:2345600,spread:0.06,fmt:money})}
       <div class="split"><button class="card" data-act="deposit"><small>Available cash</small><b>$65,797</b></button><button class="card" data-tab="portfolio"><small>Invested</small><b>$2,279,803</b></button></div>
       <div class="qa"><button data-act="deposit"><i></i>Deposit</button><button data-act="deposit"><i></i>Withdraw</button><button data-tab="explore"><i></i>Invest</button></div></section>
