@@ -197,9 +197,9 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     home: () => `${status()}${topbar('Finamex')}<div class="content home">
       <section class="mod"><div style="color:var(--muted);font-size:13px">Contract C100504445 ⌄</div>
       ${hero('Total value','$2,345,600','+$12,400 (0.5%) today')}
-      ${chart('home',{seed:7,h:56,range:'1M',base:2345600,spread:0.06,fmt:money})}</section>
+      ${chart('home',{seed:7,h:56,range:'1M',base:2345600,spread:0.06,fmt:money})}
       <div class="split"><button class="card" data-act="deposit"><small>Available cash</small><b>$65,797</b><span class="split-bar"><i style="width:3%"></i></span><em>3% of total · Add money ›</em></button><button class="card" data-tab="portfolio"><small>Invested</small><b>$2,279,803</b><span class="split-bar"><i style="width:97%"></i></span><em>+$84,200 (3.7%) gain ›</em></button></div>
-      <div class="qa"><button data-act="deposit"><i></i>Deposit</button><button data-act="deposit"><i></i>Withdraw</button><button data-tab="explore"><i></i>Invest</button></div>
+      <div class="qa"><button data-act="deposit"><i></i>Deposit</button><button data-act="deposit"><i></i>Withdraw</button><button data-tab="explore"><i></i>Invest</button></div></section>
       <section class="mod"><div class="sect"><h3>For you</h3></div>
       <div class="hscroll">${nba.map(n=>`<div class="nba"><span class="tag">${n[0]}</span><h4>${n[1]}</h4><p>${n[2]}</p><button class="btn sec" data-act="${n[4]}">${n[3]}</button></div>`).join('')}</div></section>
       <button class="goalcard" data-act="goals"><span class="hd"><b>Your goals</b><span class="chev">›</span></span><span class="gsum">$84,500 <small>saved across 3 goals · 2 on track</small></span>${goals.map(g=>`<span class="mini"><span>${g[0]}</span><span class="bar"><i style="width:${g[4]}%"></i></span><span>${g[4]}%</span></span>`).join('')}</button>
