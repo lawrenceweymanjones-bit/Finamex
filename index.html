@@ -125,7 +125,11 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .content.home{padding-top:24px}.home-head{display:flex;flex-direction:column;gap:20px;margin-bottom:12px}.home-head .hero .v{margin:6px 0 2px}
 .donut{display:flex;align-items:center;gap:24px}.donut svg{width:136px;height:136px;flex:none;color:var(--fg)}.donut text{font:500 22px var(--font);fill:var(--fg)}.donut text.sm{font-size:11px;font-weight:400;fill:var(--muted)}
 .donut .dl{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}.donut .dl div{display:flex;align-items:center;gap:10px;font-size:14px}.donut .dl i{width:10px;height:10px;border-radius:50%;background:var(--fg);flex:none}.donut .dl span{flex:1}.donut .dl b{font-weight:500;font-variant-numeric:tabular-nums}
-.ctype .segs{width:180px}
+.rangebar{display:flex;align-items:center;gap:8px}.rangebar .segs{flex:1;min-width:0}
+.ctoggle{--tb:var(--block);width:40px;height:40px;flex:none;border-radius:50%;border:0;background:var(--block);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0}.ctoggle svg{width:18px;height:18px}
+.ctoggle.on{--tb:var(--fg);background:var(--fg);color:var(--bg)}
+.card.stats{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px;padding:20px}.stats div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.stats small{color:var(--muted);font-size:12px}.stats b{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
 button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 </style>
 </head>
@@ -247,10 +251,9 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
       return `${status()}${topbar('',{back:true,noBell:true,action:'☆'})}<div class="content tight">
       <div><div style="color:var(--muted);font-size:13px">${k} · BMV</div><div style="font-size:24px;font-weight:500">${st.name}</div></div>
       ${hero('Last price',two(st.price),st.chg)}
-      <div class="ctype">${segs(['Line','Candles'],state.ctype||'Line','ctype')}</div>
-      ${(state.ctype||'Line')==='Candles' ? candles('stock',opt) : chart('stock',{...opt, spread:0.1, vol:1.2})}
-      ${segs(['1D','1W','1M','3M','1Y','MAX'],state.range||'1Y','range')}
-      <div class="card"><div class="grid2">${st.stats.map(x=>`<div><small>${x[0]}</small><b>${x[1]}</b></div>`).join('')}</div></div>
+      ${state.ctype==='Candles' ? candles('stock',opt) : chart('stock',{...opt, spread:0.1, vol:1.2})}
+      <div class="rangebar">${segs(['1D','1W','1M','3M','1Y','MAX'],state.range||'1Y','range')}<button class="ctoggle ${state.ctype==='Candles'?'on':''}" data-seg="ctype:${state.ctype==='Candles'?'Line':'Candles'}" aria-pressed="${state.ctype==='Candles'}" aria-label="Candlestick chart"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3v14M14 3v14" stroke="currentColor" stroke-width="1.5"/><rect x="3.75" y="6" width="4.5" height="7" rx="1" fill="var(--tb)" stroke="currentColor" stroke-width="1.5"/><rect x="11.75" y="5" width="4.5" height="6" rx="1" fill="currentColor" stroke="currentColor" stroke-width="1.5"/></svg></button></div>
+      <div class="card stats">${st.stats.map(x=>`<div><small>${x[0]}</small><b>${x[1]}</b></div>`).join('')}</div>
       <div class="label">About</div>
       <p class="note" style="font-size:13px">${st.about}</p>
     </div><div class="footer"><button class="btn sec" data-act="order:Sell">Sell</button><button class="btn" data-act="order:Buy">Buy</button></div>`; },
