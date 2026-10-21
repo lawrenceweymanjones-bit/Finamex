@@ -125,6 +125,7 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .content.home{padding-top:24px}.home-head{display:flex;flex-direction:column;gap:20px;margin-bottom:12px}.home-head .hero .v{margin:6px 0 2px}
 .donut{display:flex;align-items:center;gap:24px}.donut svg{width:136px;height:136px;flex:none;color:var(--fg)}.donut text{font:500 22px var(--font);fill:var(--fg)}.donut text.sm{font-size:11px;font-weight:400;fill:var(--muted)}
 .donut .dl{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}.donut .dl div{display:flex;align-items:center;gap:10px;font-size:14px}.donut .dl i{width:10px;height:10px;border-radius:50%;background:var(--fg);flex:none}.donut .dl span{flex:1}.donut .dl b{font-weight:500;font-variant-numeric:tabular-nums}
+.ctype .segs{width:180px}
 button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 </style>
 </head>
@@ -173,6 +174,32 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     </div>`;
   };
   const money = v => '$' + Math.round(v).toLocaleString('en-US');
+  // Candlestick chart: seeded OHLC walk ending on the current price. Monochrome: up candles hollow, down candles filled.
+  const candles = (key, o) => {
+    const range = state.range || '1Y'; const R = RANGES[range] || RANGES['1Y']; const n = Math.min(R.n, 40), h = o.h || 160, w = 380, cw = w/n;
+    let s = (o.seed*131 + range.length*17 + range.charCodeAt(0)) % 233280;
+    const rnd = () => { s = (s*9301+49297)%233280; return s/233280; };
+    const bars = []; let c = 0;
+    for (let i=0;i<n;i++){ const op = c + (rnd()-0.5)*0.4; c = op + (rnd()-0.48)*1.6; bars.push({o:op, c, h:Math.max(op,c)+rnd()*0.6, l:Math.min(op,c)-rnd()*0.6}); }
+    const shift = c, scale = o.base*0.012;
+    bars.forEach(b => { for (const k of ['o','c','h','l']) b[k] = o.base + (b[k]-shift)*scale; });
+    const vmin = Math.min(...bars.map(b=>b.l)), vmax = Math.max(...bars.map(b=>b.h)), vs = vmax-vmin || 1;
+    const y = p => h-10-((p-vmin)/vs)*(h-28);
+    const end = new Date(2026,9,21,15,0); const dates = bars.map((_,i)=> new Date(end.getTime() - (n-1-i)/(n-1)*R.days*864e5));
+    const body = bars.map((b,i)=>{ const x = (i+.5)*cw, up = b.c>=b.o, t = y(Math.max(b.o,b.c)), bh = Math.max(1, Math.abs(y(b.o)-y(b.c)));
+      return `<line x1="${x}" x2="${x}" y1="${y(b.h).toFixed(1)}" y2="${y(b.l).toFixed(1)}" stroke="currentColor" vector-effect="non-scaling-stroke"/><rect x="${(x-cw*.32).toFixed(1)}" y="${t.toFixed(1)}" width="${(cw*.64).toFixed(1)}" height="${bh.toFixed(1)}" fill="${up?'var(--bg)':'currentColor'}" stroke="currentColor" vector-effect="non-scaling-stroke"/>`; }).join('');
+    const chg = (bars[n-1].c-bars[0].o)/bars[0].o*100;
+    charts[key] = { vals:bars.map(b=>b.c), bars, dates, fmt:o.fmt, range, w, h, y, n, candle:true };
+    return `<div class="chart" data-chart="${key}" style="--h:${h}px">
+      <svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">${body}<line class="cur" x1="0" x2="0" y1="0" y2="${h}" stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="3 3" opacity="0"/><circle class="dot" r="0"/></svg>
+      <div class="tip" hidden><b></b><small></small></div>
+      <div class="chg">${chg>=0?'+':''}${chg.toFixed(2)}% <small>${range}</small></div>
+    </div>`;
+  };
+  const stocks = {
+    WALMEX: { name:'Walmart de México', price:62.40, chg:'+$0.74 (1.2%) today', seed:53, stats:[['Open','$61.80'],['Day range','$61.55–62.70'],['Volume','18.4M'],['Market cap','$1.09T'],['P/E','21.4'],['Dividend yield','3.1%'],['52-week range','$54.20–71.90'],['Exchange','BMV']], about:'Mexico’s largest retailer, running Walmart, Bodega Aurrera and Sam’s Club stores across Mexico and Central America.' },
+    GFNORTE: { name:'Grupo Financiero Banorte', price:158.10, chg:'+$0.94 (0.6%) today', seed:67, stats:[['Open','$157.20'],['Day range','$156.80–158.90'],['Volume','6.2M'],['Market cap','$456B'],['P/E','8.9'],['Dividend yield','6.4%'],['52-week range','$132.40–174.60'],['Exchange','BMV']], about:'One of Mexico’s largest banking groups, covering retail and corporate banking, insurance and pensions.' },
+  };
   const spark = (seed,h) => chart('home'+seed, { seed, h, base:2345600, spread:0.08, fmt:money });
   // Donut: one circle per slice on a pathLength of 100, so dash lengths are the percentages; a small gap separates slices.
   const SHADES = [1,.75,.55,.38,.22];
@@ -211,10 +238,22 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
       <div class="hscroll">${nba.map(n=>`<div class="nba"><span class="tag">${n[0]}</span><h4>${n[1]}</h4><p>${n[2]}</p><button class="btn sec" data-act="${n[4]}">${n[3]}</button></div>`).join('')}</div></section>
       <button class="goalcard" data-act="goals"><span class="hd"><b>Your goals</b><span class="chev">›</span></span><span class="gsum">$84,500 <small>saved across 3 goals · 2 on track</small></span>${goals.map(g=>`<span class="mini"><span>${g[0]}</span><span class="bar"><i style="width:${g[4]}%"></i></span><span>${g[4]}%</span></span>`).join('')}</button>
       <section class="mod"><div class="sect"><h3>Watchlist</h3><button data-tab="explore">Edit</button></div>
-      <div class="list">${watch.map(w=>row(w[0],w[1],w[2],w[3],{icon:true,act:'instrument'})).join('')}</div></section>
+      <div class="list">${watch.map(w=>row(w[0],w[1],w[2],w[3],{icon:true,act:stocks[w[0]]?`stock:${w[0]}`:'instrument'})).join('')}</div></section>
       <section class="mod"><div class="sect"><h3>Learn</h3><button data-act="none">See all</button></div>
       <div class="hscroll">${learn.map(l=>`<button class="learn" data-act="none"><span class="box">${l[0]}</span><b>${l[1]}</b><small>${l[2]}</small></button>`).join('')}</div></section>
     </div>${navbar('Home')}`,
+
+    stock: () => { const k = state.stock || 'WALMEX', st = stocks[k], two = v => '$' + v.toFixed(2), opt = { seed:st.seed, h:160, base:st.price, fmt:two };
+      return `${status()}${topbar('',{back:true,noBell:true,action:'☆'})}<div class="content tight">
+      <div><div style="color:var(--muted);font-size:13px">${k} · BMV</div><div style="font-size:24px;font-weight:500">${st.name}</div></div>
+      ${hero('Last price',two(st.price),st.chg)}
+      <div class="ctype">${segs(['Line','Candles'],state.ctype||'Line','ctype')}</div>
+      ${(state.ctype||'Line')==='Candles' ? candles('stock',opt) : chart('stock',{...opt, spread:0.1, vol:1.2})}
+      ${segs(['1D','1W','1M','3M','1Y','MAX'],state.range||'1Y','range')}
+      <div class="card"><div class="grid2">${st.stats.map(x=>`<div><small>${x[0]}</small><b>${x[1]}</b></div>`).join('')}</div></div>
+      <div class="label">About</div>
+      <p class="note" style="font-size:13px">${st.about}</p>
+    </div><div class="footer"><button class="btn sec" data-act="order:Sell">Sell</button><button class="btn" data-act="order:Buy">Buy</button></div>`; },
 
     goals: () => `${status()}${topbar('Goals',{back:true,noBell:true,action:'New',actionAct:'none'})}<div class="content">
       ${hero('Saved toward goals','$84,500','2 of 3 on track')}
@@ -226,7 +265,7 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
       <div class="search"><i></i>Search instruments</div>
       <div class="tabs">${['All','Cetes','Pesos','Funds','Stocks','Dollars'].map(c=>`<button class="${state.cat===c?'on':''}" data-cat="${c}">${c}</button>`).join('')}</div>
       <div class="status-line"><i></i>Cetes auction open until 13:00 · BMV open until 15:00</div>
-      <div class="list">${instruments.filter(i=>state.cat==='All'||i[4]===state.cat).map(i=>row(i[0],i[1],i[2],i[3],{icon:true,act:'instrument'})).join('')}</div>
+      <div class="list">${instruments.filter(i=>state.cat==='All'||i[4]===state.cat).map(i=>row(i[0],i[1],i[2],i[3],{icon:true,act:stocks[i[0]]?`stock:${i[0]}`:'instrument'})).join('')}</div>
       <div class="label">Invest for me</div>
       <div class="two"><div class="card filled"><h4>+360 goals</h4><p>Strategy from your profile</p></div><div class="card filled"><h4>Managed portfolios</h4><p>Wealth contracts</p></div></div>
     </div>${navbar('Explore')}`,
@@ -355,11 +394,12 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     const c = charts[el.dataset.chart]; if (!c) return;
     const svg = el.querySelector('svg'), rect = svg.getBoundingClientRect();
     const px = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
-    const i = Math.round(px/rect.width*(c.n-1));
-    const vx = (i/(c.n-1))*c.w, vy = c.y(c.vals[i]);
+    // candles snap to the bar under the pointer; lines snap to the nearest point
+    const i = c.candle ? Math.min(c.n-1, Math.floor(px/rect.width*c.n)) : Math.round(px/rect.width*(c.n-1));
+    const vx = c.candle ? (i+.5)*c.w/c.n : (i/(c.n-1))*c.w, vy = c.y(c.vals[i]);
     const cur = svg.querySelector('.cur'); cur.setAttribute('x1',vx); cur.setAttribute('x2',vx); cur.setAttribute('opacity','.6');
     const dot = svg.querySelector('.dot'); dot.setAttribute('cx',vx); dot.setAttribute('cy',vy.toFixed(1));
-    const tip = el.querySelector('.tip'); tip.hidden=false; tip.querySelector('b').textContent = c.fmt(c.vals[i]); tip.querySelector('small').textContent = fmtDate(c.dates[i], c.range);
+    const tip = el.querySelector('.tip'); tip.hidden=false; tip.querySelector('b').textContent = c.fmt(c.vals[i]); tip.querySelector('small').textContent = fmtDate(c.dates[i], c.range) + (c.candle ? ` · O ${c.fmt(c.bars[i].o)} H ${c.fmt(c.bars[i].h)} L ${c.fmt(c.bars[i].l)}` : '');
     const tw = tip.offsetWidth/2; tip.style.left = Math.max(tw, Math.min(rect.width - tw, px)) + 'px';
   }
   function unscrub(e){
@@ -380,7 +420,7 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     if (t.dataset.tab){ go(t.dataset.tab); return; }
     if (t.dataset.cat){ state.cat = t.dataset.cat; render(); return; }
     if (t.dataset.term){ state.term = t.dataset.term; render(); return; }
-    if (t.dataset.seg){ const [k,v]=t.dataset.seg.split(':'); if(k==='side') state.side=v; if(k==='seg') state.seg=v; if(k==='act') state.act=v; if(k==='range') state.range=v; render(); return; }
+    if (t.dataset.seg){ const [k,v]=t.dataset.seg.split(':'); if(k==='side') state.side=v; if(k==='seg') state.seg=v; if(k==='act') state.act=v; if(k==='range') state.range=v; if(k==='ctype') state.ctype=v; render(); return; }
     if (t.dataset.key){ const k=t.dataset.key; if(k==='⌫') state.amount=state.amount.slice(0,-1); else if(state.amount.length<9) state.amount=(state.amount==='0'?'':state.amount)+k; render(); return; }
     if (t.dataset.code){ const k=t.dataset.code; if(k==='⌫') state.code=Math.max(0,state.code-1); else state.code=Math.min(5,state.code+1); render(); return; }
     const a = t.dataset.act;
@@ -393,6 +433,7 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     if (a==='position'){ push('position'); return; }
     if (a==='deposit'){ push('deposit'); return; }
     if (a==='goals'){ push('goals'); return; }
+    if (a.startsWith('stock:')){ state.stock=a.split(':')[1]; push('stock'); return; }
     if (a.startsWith('order:')){ state.side=a.split(':')[1]; state.code=0; push('order'); return; }
     if (a==='review'){ state.code=0; push('review'); return; }
     if (a==='receipt'){ push('receipt'); return; }
