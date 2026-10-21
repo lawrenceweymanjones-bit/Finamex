@@ -16,9 +16,9 @@
 html,body{height:100%}
 body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);font-size:14px;-webkit-font-smoothing:antialiased;padding-block:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:14px}
 *{box-sizing:border-box}
-.stage{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center;color:var(--muted);font-size:12px;max-width:393px;width:100%}
+.stage{display:flex;gap:8px 12px;align-items:center;flex-wrap:wrap;justify-content:center;color:var(--muted);font-size:12px;max-width:640px;width:100%}
 .stage b{color:var(--fg);font-weight:500}
-.stage .jump{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.stage .jump{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 .stage button{font:inherit;font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
 /* iPhone 16 / 15 Pro: 393×852 points; shrinks proportionally on short windows */
 .phone{position:relative;flex:none;height:min(852px,max(600px,calc(100vh - 110px)));aspect-ratio:393/852;max-width:100%;background:var(--bg);border:1px solid var(--line);border-radius:28px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.12)}
@@ -128,17 +128,35 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .stats small{color:var(--muted);font-size:12px}.stats b{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums}
 .hbars{display:flex;flex-direction:column;gap:8px}.stack{display:flex;gap:2px;height:12px;border-radius:6px;overflow:hidden}.stack i{display:block;background:var(--fg)}
 .row .sw{width:10px;height:10px;border-radius:50%;background:var(--fg);flex:none}
+/* Stage tabs and onboarding */
+.stage .modes{display:flex;background:var(--block2);border-radius:999px;padding:3px}.stage .modes button{border:0;background:none;padding:5px 14px;font-size:12px;color:var(--muted)}.stage .modes button.on{background:var(--bg);color:var(--fg);font-weight:500}
+.obprog{display:flex;flex-direction:column;gap:8px}.obprog span:first-child{font-size:12px;color:var(--muted)}
+.segbar{display:flex;gap:4px}.segbar i{flex:1;height:4px;border-radius:2px;background:var(--block2)}.segbar i.on{background:var(--fg)}
+.obh h2{margin:0;font-size:24px;font-weight:500;line-height:1.2}.obh p{margin:6px 0 0;color:var(--muted);font-size:14px;line-height:1.45}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}.field label{font-size:12px;color:var(--muted)}.field small{font-size:12px;color:var(--muted);line-height:1.4}
+.field .in{border:1px solid var(--line);border-radius:10px;padding:13px 14px;font-size:15px;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:48px}.field .in.ph{color:var(--muted)}.field .in > span:not(.tag){color:var(--muted)}
+.tag{display:inline-flex;font-size:11px;font-weight:500;background:var(--block);border-radius:999px;padding:3px 8px;color:var(--fg);white-space:nowrap}
+.chk{display:flex;gap:12px;align-items:flex-start;background:none;border:0;padding:0;font:inherit;color:var(--fg);text-align:left;cursor:pointer;font-size:14px;line-height:1.4}.chk i{flex:none;width:22px;height:22px;border:1.5px solid var(--fg);border-radius:6px;display:grid;place-items:center;font-style:normal;font-size:13px}.chk.on i{background:var(--fg);color:var(--bg)}
+.opts{display:flex;flex-direction:column;gap:8px}.opt{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:none;font:inherit;font-size:15px;color:var(--fg);text-align:left;cursor:pointer}.opt i{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);flex:none;box-sizing:border-box}.opt.on{border-color:var(--fg)}.opt.on i{border:6px solid var(--fg)}
+.upload{border:1.5px dashed var(--line);border-radius:12px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:6px;background:none;font:inherit;color:var(--fg);cursor:pointer;text-align:center}.upload small{color:var(--muted);font-size:12px;line-height:1.4}.upload.done{border-style:solid;flex-direction:row;justify-content:space-between;align-items:center;text-align:left}
+.setup{background:var(--block);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;border:0;font:inherit;color:var(--fg);text-align:left;cursor:pointer;width:100%}.setup .tag{background:var(--bg);align-self:flex-start}.setup h4{margin:0;font-size:18px;font-weight:500}.setup p{margin:0;color:var(--muted);font-size:13px}.setup .btn{text-align:center;margin-top:4px}
+.qa.locked button{opacity:.4}
+.demo-bar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 12px 4px;padding:6px 6px 6px 14px;border-radius:999px;background:var(--fg);color:var(--bg);font-size:12px}.demo-bar b{font-weight:500}.demo-bar button{font:inherit;font-size:12px;font-weight:500;border:0;border-radius:999px;background:var(--bg);color:var(--fg);padding:6px 12px;cursor:pointer}
+.content.wl{justify-content:center;gap:20px}.wl .brand{font-size:24px;font-weight:500}.wl .box{height:260px;border-radius:16px;flex:none}.wl h2{font-size:26px;font-weight:500;margin:0;line-height:1.2}.wl p{margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.45}
+.dots{display:flex;gap:6px}.dots button{width:8px;height:8px;border-radius:4px;border:0;background:var(--block2);padding:0;cursor:pointer}.dots button.on{background:var(--fg);width:20px}
+.footer.stack{flex-direction:column}.linkbtn{background:none;border:0;font:inherit;font-size:14px;color:var(--fg);cursor:pointer;padding:6px;text-decoration:underline;text-underline-offset:3px}
 button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 </style>
 </head>
 <body>
-<div class="stage"><span><b>Finamex</b> · wireframes v3 · click anything</span><span class="jump"><button data-go="home">Home</button><button data-go="portfolio">Portfolio</button><button data-go="explore">Explore</button><button data-go="activity">Activity</button><button data-go="notif">Notifications</button></span></div>
+<div class="stage"><span class="modes" id="modes"><button data-mode="app">App</button><button data-mode="onboarding">Onboarding</button></span><span class="jump" id="jump"></span></div>
 <div class="phone" id="phone"></div>
 
 <script>
 (function(){
   const phone = document.getElementById('phone');
-  const state = { amount: '50000', term: '28 d', side: 'Buy', code: 0, cat: 'All', seg: 'All' };
+  // mode: client (signed-in app) · prospect (onboarding, account not open yet) · demo (sample data from the welcome screen)
+  const state = { amount: '50000', term: '28 d', side: 'Buy', code: 0, cat: 'All', seg: 'All', mode: 'client', obStep: 1, otp: 0, chk: {}, slide: 0 };
   const fmt = n => '$' + Number(n||0).toLocaleString('en-US');
   const status = () => `<div class="status"><span>9:41</span><span>●●●</span></div>`;
   const topbar = (title, o={}) => `<div class="topbar">
@@ -230,7 +248,107 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     ['GFNORTE','Stock · BMV','$158.10','+0.6%','Stocks'],
   ];
 
+  // Onboarding: eight steps; obStep is the furthest step reached, so Save & exit / Continue resume there
+  const OB = ['Create your account','Verify your phone','About you','Work &amp; income','Your investing plans','Your address','Your bank account','Review &amp; sign'];
+  const SLIDES = [['Invest from $100','Government Cetes, funds, stocks and dollars, all in one app.'],['Your money, working in Mexico’s markets','Track every position and goal in one place.'],['Open your account in about 10 minutes','Have your ID, a recent proof of address and your bank CLABE ready.']];
+  const obHead = n => `${status()}${topbar('',{back:true,noBell:true,action:'Save &amp; exit',actionAct:'obSave:'+n})}`;
+  const obTitle = (n, sub) => `<div class="obprog"><span>Step ${n} of ${OB.length}</span><span class="segbar">${OB.map((_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</span></div><div class="obh"><h2>${OB[n-1]}</h2>${sub?`<p>${sub}</p>`:''}</div>`;
+  const obNext = (n, label, ok=true) => `<div class="footer plain"><button class="btn" data-act="obNext:${n}" ${ok?'':'disabled'}>${label||'Continue'}</button></div>`;
+  const fld = (label, value, o={}) => `<div class="field"><label>${label}</label><div class="in ${value?'':'ph'}">${value||o.ph||''}${o.select?'<span>⌄</span>':''}${o.tag?`<span class="tag">${o.tag}</span>`:''}</div>${o.hint?`<small>${o.hint}</small>`:''}</div>`;
+  const chk = (key, label) => `<button class="chk ${state.chk[key]?'on':''}" data-chk="${key}"><i>${state.chk[key]?'✓':''}</i><span>${label}</span></button>`;
+  const opt = (group, label) => `<button class="opt ${state[group]===label?'on':''}" data-opt="${group}:${label}"><i></i>${label}</button>`;
+
   const screens = {
+    welcome: () => `${status()}<div class="content wl">
+      <div class="brand">Finamex</div>
+      <span class="box">Illustration</span>
+      <div><h2>${SLIDES[state.slide][0]}</h2><p>${SLIDES[state.slide][1]}</p></div>
+      <div class="dots">${SLIDES.map((_,i)=>`<button class="${i===state.slide?'on':''}" data-slide="${i}" aria-label="Slide ${i+1}"></button>`).join('')}</div>
+    </div><div class="footer plain stack"><button class="btn" data-act="obStart">Open an account</button><button class="btn sec" data-act="demo">Explore a demo account</button><button class="linkbtn" data-act="signin">I already have an account · Sign in</button><p class="note" style="text-align:center">Privacy notice · Terms &amp; conditions</p></div>`,
+
+    obLocation: () => `${status()}${topbar('',{back:true,noBell:true})}<div class="content">
+      <span class="box" style="height:200px">Location illustration</span>
+      <div class="obh"><h2>Allow location to continue</h2><p>We confirm you’re in Mexico before opening your account, and each time you sign in.</p></div>
+    </div><div class="footer plain stack"><button class="btn" data-act="obAllow">Allow location</button><button class="btn sec" data-act="obDeny">Not now</button></div>`,
+
+    obNoLoc: () => `${status()}${topbar('',{back:true,noBell:true})}<div class="content">
+      <div class="success"><i></i><b>Location is off</b><span>We can’t open your account without confirming your location. Turn it on in Settings, then try again.</span></div>
+      <p class="note" style="text-align:center">Need help? Call 800 000 0000</p>
+    </div><div class="footer plain stack"><button class="btn" data-act="obAllow">Try again</button><button class="btn sec" data-act="none">Open Settings</button></div>`,
+
+    obOutside: () => `${status()}${topbar('',{back:true,noBell:true})}<div class="content">
+      <div class="success"><i></i><b>You need to be in Mexico</b><span>Accounts can only be opened from within Mexico. If you think this is a mistake, give us a call.</span></div>
+      <p class="note" style="text-align:center">800 000 0000 · Mon–Fri 8:00–20:00</p>
+    </div><div class="footer plain"><button class="btn sec" data-act="obWelcome">Back to start</button></div>`,
+
+    ob1: () => `${obHead(1)}<div class="content">${obTitle(1,'This is how you’ll sign in.')}
+      ${fld('Full name','María Fernanda López')}${fld('Email','maria.lopez@email.com')}${fld('Mobile number','+52 55 •••• 4471')}
+      ${fld('Username','mflopez',{tag:'Available'})}${fld('Password','••••••••••',{hint:'At least 8 characters with upper and lower case, a number and a symbol'})}
+      ${fld('Promo code (optional)','',{ph:'Enter a code'})}
+      ${chk('terms','I accept the Privacy Notice and the Terms &amp; Conditions')}
+    </div>${obNext(1,'Continue',!!state.chk.terms)}`,
+
+    ob2: () => `${obHead(2)}<div class="content">${obTitle(2,'Enter the 5-digit code we sent to +52 55 •••• 4471.')}
+      <div class="code">${[0,1,2,3,4].map(i=>`<i class="${i<state.otp?'on':''}">${i<state.otp?'•':''}</i>`).join('')}</div>
+      <p class="note">Resend in 0:42 · Send by email instead · Change number</p>
+      <div class="keypad">${['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>k?`<button data-otp="${k}">${k}</button>`:'<span></span>').join('')}</div>
+    </div>${obNext(2,'Verify',state.otp>=5)}`,
+
+    ob3: () => `${obHead(3)}<div class="content">${obTitle(3,'As it appears on your official ID.')}
+      ${fld('CURP','LOMF900312MDFPRR08')}${fld('RFC','LOMF900312AB1',{tag:'From your CURP'})}
+      ${fld('Date of birth','12 March 1990')}${fld('Nationality','Mexican',{select:true})}${fld('State of birth','Ciudad de México',{select:true})}
+    </div>${obNext(3)}`,
+
+    ob4: () => `${obHead(4)}<div class="content">${obTitle(4,'We’re required to ask where your money comes from.')}
+      ${fld('Occupation','Employee · private sector',{select:true})}${fld('Main source of income','Salary',{select:true})}${fld('Source of the funds you’ll invest','Savings',{select:true})}
+    </div>${obNext(4)}`,
+
+    ob5: () => `${obHead(5)}<div class="content">${obTitle(5,'A rough idea is fine. You can change this later.')}
+      <div class="label">How much do you expect to invest?</div>
+      <div class="opts">${['Up to $50,000','$50,000 – $250,000','$250,000 – $1,000,000','More than $1,000,000'].map(o=>opt('plan',o)).join('')}</div>
+      <div class="label">How often will you deposit or withdraw?</div>
+      <div class="opts">${['1–2 times a month','3–5 times a month','More than 5 times a month'].map(o=>opt('freq',o)).join('')}</div>
+    </div>${obNext(5,'Continue',!!(state.plan&&state.freq))}`,
+
+    ob6: () => `${obHead(6)}<div class="content">${obTitle(6,'Where you live now.')}
+      ${fld('Street and number','Av. Insurgentes Sur 1234, Int. 5')}<div class="two">${fld('Postcode','03100')}${fld('Neighbourhood','Del Valle',{select:true})}</div>${fld('Municipality and state','Benito Juárez, CDMX')}
+      <div class="label">Proof of address</div>
+      ${state.proof ? `<button class="upload done" data-act="obUpload"><span><b style="font-weight:500">proof-of-address.pdf</b><br><small>1.2 MB · uploaded</small></span><span class="tag">Replace</span></button>`
+        : `<button class="upload" data-act="obUpload"><b style="font-weight:500">Upload proof of address</b><small>Utility bill or bank statement under 3 months old · PDF, JPG or PNG</small></button>`}
+    </div>${obNext(6,'Continue',!!state.proof)}`,
+
+    ob7: () => `${obHead(7)}<div class="content">${obTitle(7,'You’ll withdraw to this account. It must be in your name.')}
+      ${fld('18-digit CLABE','0121 8000 1234 5678 90',{tag:'BBVA'})}${fld('Account holder','María Fernanda López')}
+      <p class="note">You can add more accounts later from your profile.</p>
+    </div>${obNext(7)}`,
+
+    ob8: () => { const ok = ['true','own','agree'].every(k=>state.chk[k]);
+      return `${obHead(8)}<div class="content">${obTitle(8,'Check your details, then sign to open your account.')}
+      <div class="list">${[[3,'About you','CURP · RFC · date of birth'],[4,'Work &amp; income','Employee · salary · savings'],[5,'Investing plans',state.plan||'Not answered'],[6,'Address','Benito Juárez, CDMX'],[7,'Bank account','BBVA ···5678 90']].map(r=>row(r[1],r[2],'','Edit',{act:'obEdit:'+r[0]})).join('')}</div>
+      <div class="list">${row('Read your contract','PDF · 12 pages','','',{act:'none'})}</div>
+      ${chk('true','The information I’ve given is true')}${chk('own','I’m acting on my own behalf')}${chk('agree','I accept the account agreement')}
+    </div>${obNext(8,'Sign and open account',ok)}`; },
+
+    obDone: () => `${status()}<div class="topbar"><h1></h1></div><div class="content">
+      <div class="success"><i></i><b>Your account is open</b><span>Contract C100504445</span></div>
+      <div class="list">${row('Add money','Transfer from your bank with SPEI','','',{act:'obFund'})}${row('Turn on Face ID','Sign in faster','','',{act:'none'})}</div>
+    </div><div class="footer plain stack"><button class="btn" data-act="obFund">Add money</button><button class="btn sec" data-act="obFinish">Go to Home</button></div>`,
+
+    prospect: () => `${status()}${topbar('Finamex')}<div class="content home">
+      <section class="mod"><button class="setup" data-act="obContinue"><span class="tag">Finish setting up</span><h4>${OB.length-state.obStep+1} steps until you can invest</h4>
+        <span class="segbar">${OB.map((_,i)=>`<i class="${i<state.obStep-1?'on':''}"></i>`).join('')}</span>
+        <p>Next: ${OB[state.obStep-1]} · about ${Math.max(2,(OB.length-state.obStep+1)*1)} min</p><span class="btn">Continue set-up</span></button></section>
+      <section class="mod"><div class="home-head">${hero('Total value','$0.00','Open your account to start investing')}</div>
+        <div class="qa locked"><button data-act="locked"><i></i>Deposit</button><button data-act="locked"><i></i>Withdraw</button><button data-act="locked"><i></i>Invest</button></div></section>
+      <section class="mod"><div class="card filled"><h4>Not ready yet?</h4><p>Look around a demo account with sample data. Nothing you do there is real.</p><button class="btn sec" data-act="demo">Explore a demo account</button></div></section>
+      <section class="mod"><div class="sect"><h3>Learn</h3><button data-act="none">See all</button></div>
+      <div class="hscroll">${learn.map(l=>`<button class="learn" data-act="none"><span class="box">${l[0]}</span><b>${l[1]}</b><small>${l[2]}</small></button>`).join('')}</div></section>
+    </div>${navbar('Home')}`,
+
+    locked: () => `${status()}${topbar('',{back:true,noBell:true})}<div class="content">
+      <div class="success"><i></i><b>Finish opening your account</b><span>You can deposit, invest and trade once your account is open. You’re on step ${state.obStep} of ${OB.length}.</span></div>
+    </div><div class="footer plain stack"><button class="btn" data-act="obContinue">Continue set-up</button><button class="btn sec" data-act="back">Not now</button></div>`,
+
     home: () => `${status()}${topbar('Finamex')}<div class="content home">
       <section class="mod"><div class="home-head"><div style="color:var(--muted);font-size:13px">Contract C100504445 ⌄</div>
       ${hero('Total value','$2,345,600','+$12,400 (0.5%) today')}</div>
@@ -309,7 +427,8 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     },
 
     receipt: () => `${status()}<div class="topbar"><h1></h1><button class="tb-action" data-act="home">Done</button></div><div class="content">
-      <div class="success"><i></i><b>Order placed</b><span>${state.side} Cetes ${state.term.replace(' d',' days')} · ${fmt(state.amount)}</span></div>
+      <div class="success"><i></i><b>${state.mode==='demo'?'Demo order placed':'Order placed'}</b><span>${state.side} Cetes ${state.term.replace(' d',' days')} · ${fmt(state.amount)}</span></div>
+      ${state.mode==='demo'?'<div class="need"><b>This is a demo</b><p>No order was sent and no money moved. Open an account to invest for real.</p><button class="btn" data-act="obStart">Open an account</button></div>':''}
       <div class="card">${kv('Status','Pending auction')}${kv('Tracking key','FMX-20261021-48213')}${kv('Date','21 Oct 2026 · 10:02')}${kv('Contract','C100504445')}${kv('Rate','Confirmed after 13:00')}${kv('Matures','24 Nov 2026')}</div>
       <div class="two"><button class="btn sec" data-act="none">Share receipt</button><button class="btn sec" data-act="position">View position</button></div>
       <p class="note">You can cancel this order until 13:00 today from Portfolio › Open orders.</p>
@@ -375,16 +494,26 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     phone.querySelectorAll('.screen').forEach(s=>s.remove());
     const el = document.createElement('div'); el.className = 'screen' + (kind?` enter-${kind}`:''); el.innerHTML = screens[name]();
     phone.appendChild(el);
+    if (state.mode==='demo'){ const st = el.querySelector('.status'); if (st) st.insertAdjacentHTML('afterend','<div class="demo-bar"><span><b>Demo account</b> · sample data</span><button data-act="obStart">Open account</button></div>'); }
+    renderStage();
     if (drawer){
       const s = document.createElement('button'); s.className='scrim'; s.setAttribute('aria-label','Close menu'); s.dataset.act='closeMenu'; el.appendChild(s);
       const d = document.createElement('div'); d.className='drawer';
-      d.innerHTML = `<div class="hd"><span class="av"></span><b>María Fernanda López</b><span class="sw">Contract C100504445 ⌄</span></div><div class="list">${[['Profile &amp; verification','Tier 2 · upgrade'],['Bank accounts','Finamex CLABE · 2 destinations'],['Beneficiaries',''],['Security','Face ID on'],['Tax data',''],['Notification settings',''],['Help &amp; support',''],['Legal &amp; documents',''],['Refer Finamex','']].map(i=>row(i[0],i[1],'','',{act:'none'})).join('')}</div><button class="out" data-act="closeMenu">Sign out</button>`;
+      d.innerHTML = `<div class="hd"><span class="av"></span><b>María Fernanda López</b><span class="sw">${state.mode==='prospect'?'Account set-up in progress':'Contract C100504445 ⌄'}</span></div><div class="list">${[['Profile &amp; verification','Tier 2 · upgrade'],['Bank accounts','Finamex CLABE · 2 destinations'],['Beneficiaries',''],['Security','Face ID on'],['Tax data',''],['Notification settings',''],['Help &amp; support',''],['Legal &amp; documents',''],['Refer Finamex','']].map(i=>row(i[0],i[1],'','',{act:'none'})).join('')}</div><button class="out" data-act="closeMenu">Sign out</button>`;
       el.appendChild(d);
     }
   }
   function push(name){ stack.push(name); render('push'); }
   function pop(){ if (stack.length>1) stack.pop(); render('pop'); }
-  function go(name){ stack = [name]; drawer=false; render('fade'); }
+  function go(name){ if (state.mode==='prospect' && ['home','portfolio','activity'].includes(name)) name = 'prospect'; stack = [name]; drawer=false; render('fade'); }
+  const JUMPS = { app: [['home','Home'],['portfolio','Portfolio'],['explore','Explore'],['activity','Activity'],['notif','Notifications']],
+    onboarding: [['welcome','Welcome'],['prospect','Dropped out'],['demo','Demo'],['obNoLoc','No location'],['obOutside','Outside Mexico']] };
+  function renderStage(){
+    const tab = state.mode==='client' ? 'app' : 'onboarding';
+    document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on', b.dataset.mode===tab));
+    const j = document.getElementById('jump'), html = JUMPS[tab].map(x=>`<button ${tab==='app'?'data-go':'data-ob'}="${x[0]}">${x[1]}</button>`).join('');
+    if (j.innerHTML !== html) j.innerHTML = html;
+  }
 
   // chart scrubbing
   const fmtDate = (d, range) => range==='1D' ? d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year: range==='MAX'?'numeric':undefined});
@@ -413,8 +542,19 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
   document.addEventListener('pointerout', e => { if (e.target.closest && e.target.closest('.chart') && !(e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.chart'))) unscrub(e); });
 
   document.addEventListener('click', e => {
-    const t = e.target.closest('[data-act],[data-tab],[data-go],[data-cat],[data-term],[data-key],[data-code],[data-seg]');
+    const t = e.target.closest('[data-act],[data-tab],[data-go],[data-cat],[data-term],[data-key],[data-code],[data-seg],[data-mode],[data-ob],[data-otp],[data-chk],[data-opt],[data-slide]');
     if (!t) return;
+    if (t.dataset.mode){ if (t.dataset.mode==='app'){ state.mode='client'; go('home'); } else { state.mode='prospect'; go('welcome'); } return; }
+    if (t.dataset.ob){ const o=t.dataset.ob; drawer=false;
+      if (o==='demo'){ state.mode='demo'; go('home'); return; }
+      state.mode='prospect';
+      if (o==='prospect'){ state.obStep=Math.max(state.obStep,4); go('prospect'); return; }
+      if (o==='welcome'){ go('welcome'); return; }
+      stack=['welcome',o]; render('fade'); return; }
+    if (t.dataset.otp){ const k=t.dataset.otp; state.otp = k==='⌫' ? Math.max(0,state.otp-1) : Math.min(5,state.otp+1); render(); return; }
+    if (t.dataset.chk){ state.chk[t.dataset.chk] = !state.chk[t.dataset.chk]; render(); return; }
+    if (t.dataset.opt){ const [g,v]=t.dataset.opt.split(':'); state[g]=v; render(); return; }
+    if (t.dataset.slide){ state.slide=Number(t.dataset.slide); render(); return; }
     if (t.dataset.go){ go(t.dataset.go); return; }
     if (t.dataset.tab){ go(t.dataset.tab); return; }
     if (t.dataset.cat){ state.cat = t.dataset.cat; render(); return; }
@@ -424,6 +564,22 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     if (t.dataset.code){ const k=t.dataset.code; if(k==='⌫') state.code=Math.max(0,state.code-1); else state.code=Math.min(5,state.code+1); render(); return; }
     const a = t.dataset.act;
     if (a==='back'){ pop(); return; }
+    // onboarding
+    if (a==='obStart'){ state.mode='prospect'; drawer=false; stack=['welcome','obLocation']; render('push'); return; }
+    if (a==='obAllow'){ push('ob1'); return; }
+    if (a==='obDeny'){ push('obNoLoc'); return; }
+    if (a==='obWelcome'){ go('welcome'); return; }
+    if (a.startsWith('obNext:')){ const n=Number(a.split(':')[1]); state.obStep=Math.max(state.obStep, Math.min(OB.length, n+1)); push(n<OB.length ? 'ob'+(n+1) : 'obDone'); return; }
+    if (a.startsWith('obSave:')){ state.obStep=Math.max(state.obStep, Number(a.split(':')[1])); go('prospect'); return; }
+    if (a.startsWith('obEdit:')){ push('ob'+a.split(':')[1]); return; }
+    if (a==='obContinue'){ stack=['prospect','ob'+state.obStep]; render('push'); return; }
+    if (a==='obUpload'){ state.proof=true; render(); return; }
+    if (a==='obFinish'){ state.mode='client'; go('home'); return; }
+    if (a==='obFund'){ state.mode='client'; stack=['home','deposit']; render('push'); return; }
+    if (a==='demo'){ state.mode='demo'; go('home'); return; }
+    if (a==='signin'){ state.mode='client'; go('home'); return; }
+    if (a==='locked'){ push('locked'); return; }
+    if (state.mode==='prospect' && (a==='deposit' || a==='goals' || a.startsWith('order:'))){ push('locked'); return; }
     if (a==='menu'){ drawer=true; render(); return; }
     if (a==='closeMenu'){ drawer=false; render(); return; }
     if (a==='notif'){ push('notif'); return; }
