@@ -52,7 +52,7 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .hero .l{font-size:13px;color:var(--muted)}.hero .v{font-size:40px;font-weight:300;line-height:1.1;font-variant-numeric:tabular-nums}.hero .s{font-size:13px;color:var(--muted);margin-top:4px}
 .box{background:var(--block);border-radius:8px;display:grid;place-items:center;color:var(--muted);font-size:12px}
 .qa{display:flex;gap:10px}.qa button{flex:1;background:var(--block);border:0;border-radius:12px;padding:14px 0 12px;display:flex;flex-direction:column;align-items:center;gap:6px;font:inherit;font-weight:500;color:var(--fg);cursor:pointer}
-.qa button i{width:40px;height:40px;border-radius:50%;background:var(--fg);color:var(--bg);display:grid;place-items:center}
+.qa button i{display:grid;place-items:center;color:var(--fg)}
 .list{display:flex;flex-direction:column}
 .row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);width:100%;background:none;border-left:0;border-right:0;border-top:0;font:inherit;color:var(--fg);text-align:left;cursor:pointer}
 .row:last-child{border-bottom:0}
@@ -396,7 +396,7 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
         ${stageBar(state.obStep-1, stageOf(state.obStep))}
         <p>Next: ${OB[state.obStep-1]} · about ${OB.length-state.obStep+2} min</p><span class="btn">Continue set-up</span></button></section>
       <section class="mod"><div class="home-head">${hero('Total value','$0.00','Open your account to start investing')}</div>
-        <div class="qa locked"><button data-act="locked"><i>${ic('deposit')}</i>Deposit</button><button data-act="locked"><i>${ic('withdraw')}</i>Withdraw</button><button data-act="locked"><i>${ic('invest')}</i>Invest</button></div></section>
+        <div class="qa locked"><button data-act="locked"><i>${ic('deposit',24)}</i>Deposit</button><button data-act="locked"><i>${ic('withdraw',24)}</i>Withdraw</button><button data-act="locked"><i>${ic('invest',24)}</i>Invest</button></div></section>
       <section class="mod"><div class="card filled"><h4>Not ready yet?</h4><p>Look around a demo account with sample data. Nothing you do there is real.</p><button class="btn sec" data-act="demo">Explore a demo account</button></div></section>
       <section class="mod"><div class="sect"><h3>Learn</h3><button data-act="none">See all</button></div>
       <div class="hscroll">${learn.map(l=>`<button class="learn" data-act="none"><span class="box">${l[0]}</span><b>${l[1]}</b><small>${l[2]}</small></button>`).join('')}</div></section>
@@ -411,7 +411,7 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
       ${hero('Total value','$2,345,600','+$12,400 (0.5%) today')}</div>
       ${chart('home',{seed:7,h:56,range:'1M',base:2345600,spread:0.06,fmt:money})}
       <div class="split"><button class="card" data-act="deposit"><small>Available cash</small><b>$65,797</b></button><button class="card" data-tab="portfolio"><small>Invested</small><b>$2,279,803</b></button></div>
-      <div class="qa"><button data-act="deposit"><i>${ic('deposit')}</i>Deposit</button><button data-act="deposit"><i>${ic('withdraw')}</i>Withdraw</button><button data-tab="explore"><i>${ic('invest')}</i>Invest</button></div></section>
+      <div class="qa"><button data-act="deposit"><i>${ic('deposit',24)}</i>Deposit</button><button data-act="deposit"><i>${ic('withdraw',24)}</i>Withdraw</button><button data-tab="explore"><i>${ic('invest',24)}</i>Invest</button></div></section>
       <section class="mod"><div class="sect"><h3>For you</h3></div>
       <div class="hscroll">${nba.map(n=>`<div class="nba"><span class="tag">${n[0]}</span><h4>${n[1]}</h4><p>${n[2]}</p><button class="btn sec" data-act="${n[4]}">${n[3]}</button></div>`).join('')}</div></section>
       <button class="goalcard" data-act="goals"><span class="hd"><b>Your goals</b><span class="chev">${ic('chevR',18)}</span></span><span class="gsum">$84,500 <small>saved across 3 goals · 2 on track</small></span>${goals.map(g=>`<span class="mini"><span>${g[0]}</span><span class="bar"><i style="width:${g[4]}%"></i></span><span>${g[4]}%</span></span>`).join('')}</button>
