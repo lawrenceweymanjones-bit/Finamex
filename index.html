@@ -144,7 +144,7 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .demo-bar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 12px 4px;padding:6px 6px 6px 14px;border-radius:999px;background:var(--fg);color:var(--bg);font-size:12px}.demo-bar b{font-weight:500}.demo-bar button{font:inherit;font-size:12px;font-weight:500;border:0;border-radius:999px;background:var(--bg);color:var(--fg);padding:6px 12px;cursor:pointer}
 .content.wl{justify-content:center;gap:20px}.wl .brand{font-size:24px;font-weight:500}.wl .box{height:260px;border-radius:16px;flex:none}.wl h2{font-size:26px;font-weight:500;margin:0;line-height:1.2}.wl p{margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.45}
 .dots{display:flex;gap:6px}.dots button{width:8px;height:8px;border-radius:4px;border:0;background:var(--block2);padding:0;cursor:pointer}.dots button.on{background:var(--fg);width:20px}
-.footer.stack{flex-direction:column}.linkbtn{background:none;border:0;font:inherit;font-size:14px;color:var(--fg);cursor:pointer;padding:6px;text-decoration:underline;text-underline-offset:3px}
+.footer.col{flex-direction:column}.linkbtn{background:none;border:0;font:inherit;font-size:14px;color:var(--fg);cursor:pointer;padding:6px;text-decoration:underline;text-underline-offset:3px}
 button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 </style>
 </head>
@@ -264,17 +264,17 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
       <span class="box">Illustration</span>
       <div><h2>${SLIDES[state.slide][0]}</h2><p>${SLIDES[state.slide][1]}</p></div>
       <div class="dots">${SLIDES.map((_,i)=>`<button class="${i===state.slide?'on':''}" data-slide="${i}" aria-label="Slide ${i+1}"></button>`).join('')}</div>
-    </div><div class="footer plain stack"><button class="btn" data-act="obStart">Open an account</button><button class="btn sec" data-act="demo">Explore a demo account</button><button class="linkbtn" data-act="signin">I already have an account · Sign in</button><p class="note" style="text-align:center">Privacy notice · Terms &amp; conditions</p></div>`,
+    </div><div class="footer plain col"><button class="btn" data-act="obStart">Open an account</button><button class="btn sec" data-act="demo">Explore a demo account</button><button class="linkbtn" data-act="signin">I already have an account · Sign in</button><p class="note" style="text-align:center">Privacy notice · Terms &amp; conditions</p></div>`,
 
     obLocation: () => `${status()}${topbar('',{back:true,noBell:true})}<div class="content">
       <span class="box" style="height:200px">Location illustration</span>
       <div class="obh"><h2>Allow location to continue</h2><p>We confirm you’re in Mexico before opening your account, and each time you sign in.</p></div>
-    </div><div class="footer plain stack"><button class="btn" data-act="obAllow">Allow location</button><button class="btn sec" data-act="obDeny">Not now</button></div>`,
+    </div><div class="footer plain col"><button class="btn" data-act="obAllow">Allow location</button><button class="btn sec" data-act="obDeny">Not now</button></div>`,
 
     obNoLoc: () => `${status()}${topbar('',{back:true,noBell:true})}<div class="content">
       <div class="success"><i></i><b>Location is off</b><span>We can’t open your account without confirming your location. Turn it on in Settings, then try again.</span></div>
       <p class="note" style="text-align:center">Need help? Call 800 000 0000</p>
-    </div><div class="footer plain stack"><button class="btn" data-act="obAllow">Try again</button><button class="btn sec" data-act="none">Open Settings</button></div>`,
+    </div><div class="footer plain col"><button class="btn" data-act="obAllow">Try again</button><button class="btn sec" data-act="none">Open Settings</button></div>`,
 
     obOutside: () => `${status()}${topbar('',{back:true,noBell:true})}<div class="content">
       <div class="success"><i></i><b>You need to be in Mexico</b><span>Accounts can only be opened from within Mexico. If you think this is a mistake, give us a call.</span></div>
@@ -332,7 +332,7 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     obDone: () => `${status()}<div class="topbar"><h1></h1></div><div class="content">
       <div class="success"><i></i><b>Your account is open</b><span>Contract C100504445</span></div>
       <div class="list">${row('Add money','Transfer from your bank with SPEI','','',{act:'obFund'})}${row('Turn on Face ID','Sign in faster','','',{act:'none'})}</div>
-    </div><div class="footer plain stack"><button class="btn" data-act="obFund">Add money</button><button class="btn sec" data-act="obFinish">Go to Home</button></div>`,
+    </div><div class="footer plain col"><button class="btn" data-act="obFund">Add money</button><button class="btn sec" data-act="obFinish">Go to Home</button></div>`,
 
     prospect: () => `${status()}${topbar('Finamex')}<div class="content home">
       <section class="mod"><button class="setup" data-act="obContinue"><span class="tag">Finish setting up</span><h4>${OB.length-state.obStep+1} steps until you can invest</h4>
@@ -347,7 +347,7 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 
     locked: () => `${status()}${topbar('',{back:true,noBell:true})}<div class="content">
       <div class="success"><i></i><b>Finish opening your account</b><span>You can deposit, invest and trade once your account is open. You’re on step ${state.obStep} of ${OB.length}.</span></div>
-    </div><div class="footer plain stack"><button class="btn" data-act="obContinue">Continue set-up</button><button class="btn sec" data-act="back">Not now</button></div>`,
+    </div><div class="footer plain col"><button class="btn" data-act="obContinue">Continue set-up</button><button class="btn sec" data-act="back">Not now</button></div>`,
 
     home: () => `${status()}${topbar('Finamex')}<div class="content home">
       <section class="mod"><div class="home-head"><div style="color:var(--muted);font-size:13px">Contract C100504445 ⌄</div>
