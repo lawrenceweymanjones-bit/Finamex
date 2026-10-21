@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Finamex Wireframes v3</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;700&display=swap">
+<style>
+/* Layout: one phone frame centred on a quiet ground; screens render inside it from JS and slide like native pushes. */
+:root{
+  --ground:#ececec; --bg:#ffffff; --fg:#1a1a1a; --muted:#7a7a7a; --block:#eeeeee; --block2:#dedede; --line:#d9d9d9; --scrim:rgba(0,0,0,.35);
+  --font:"Basis Grotesque Pro","Basis Grotesque","Hanken Grotesk",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ground:#161616;--bg:#1f1f1f;--fg:#f2f2f2;--muted:#9a9a9a;--block:#2a2a2a;--block2:#3a3a3a;--line:#383838;--scrim:rgba(0,0,0,.55);color-scheme:dark}}
+:root[data-theme="dark"]{--ground:#161616;--bg:#1f1f1f;--fg:#f2f2f2;--muted:#9a9a9a;--block:#2a2a2a;--block2:#3a3a3a;--line:#383838;--scrim:rgba(0,0,0,.55);color-scheme:dark}
+html,body{height:100%}
+body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);font-size:14px;-webkit-font-smoothing:antialiased;padding-block:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:14px}
+*{box-sizing:border-box}
+.stage{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center;color:var(--muted);font-size:12px;max-width:412px;width:100%}
+.stage b{color:var(--fg);font-weight:500}
+.stage .jump{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.stage button{font:inherit;font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
+.phone{position:relative;width:min(412px,100%);height:min(917px,calc(100vh - 110px));min-height:600px;background:var(--bg);border:1px solid var(--line);border-radius:28px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.12)}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);will-change:transform,opacity}
+.screen.enter-push{animation:push .3s cubic-bezier(.2,.7,.2,1)}
+.screen.enter-pop{animation:pop .3s cubic-bezier(.2,.7,.2,1)}
+.screen.enter-fade{animation:fade .2s ease-out}
+@keyframes push{from{transform:translateX(100%)}to{transform:none}}
+@keyframes pop{from{transform:translateX(-30%);opacity:.6}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.screen{animation:none!important}}
+.status{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-weight:500;flex:none}
+.status span:last-child{color:var(--muted);font-size:10px}
+.topbar{height:56px;display:flex;align-items:center;gap:12px;padding:0 12px;flex:none}
+.topbar h1{font-size:20px;font-weight:500;margin:0;flex:1;min-width:0}
+.icon{width:40px;height:40px;border:0;background:none;color:var(--fg);display:grid;place-items:center;border-radius:50%;cursor:pointer;font:inherit;font-size:22px;flex:none}
+.icon:hover{background:var(--block)}
+.icon .ham{display:grid;gap:4px}.icon .ham i{display:block;width:20px;height:2px;background:var(--fg)}
+.icon .bell{width:18px;height:18px;border:2px solid var(--fg);border-radius:50%}
+.icon .star{font-size:20px}
+.tb-action{font:inherit;font-size:14px;font-weight:500;color:var(--muted);background:none;border:0;cursor:pointer;padding:0 8px}
+.content{flex:1;overflow-y:auto;padding:8px 16px 24px;display:flex;flex-direction:column;gap:16px;min-height:0}
+.content.tight{gap:14px}
+.navbar{flex:none;background:var(--block);display:flex;justify-content:space-between;padding:12px 16px calc(20px + env(safe-area-inset-bottom,0px))}
+.navbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;font:inherit;font-size:12px;color:var(--muted);cursor:pointer}
+.navbar button .pill{width:56px;height:32px;border-radius:16px;display:grid;place-items:center}
+.navbar button .pill i{width:20px;height:20px;border-radius:4px;background:var(--fg);opacity:.5}
+.navbar button.active{color:var(--fg);font-weight:500}
+.navbar button.active .pill{background:var(--block2)}.navbar button.active .pill i{opacity:1}
+.label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.hero .l{font-size:13px;color:var(--muted)}.hero .v{font-size:40px;font-weight:300;line-height:1.1;font-variant-numeric:tabular-nums}.hero .s{font-size:13px;color:var(--muted);margin-top:4px}
+.box{background:var(--block);border-radius:8px;display:grid;place-items:center;color:var(--muted);font-size:12px}
+.qa{display:flex;gap:10px}.qa button{flex:1;background:var(--block);border:0;border-radius:12px;padding:14px 0 12px;display:flex;flex-direction:column;align-items:center;gap:6px;font:inherit;font-weight:500;color:var(--fg);cursor:pointer}
+.qa button i{width:28px;height:28px;border-radius:50%;background:var(--fg)}
+.list{display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);width:100%;background:none;border-left:0;border-right:0;border-top:0;font:inherit;color:var(--fg);text-align:left;cursor:pointer}
+.row:last-child{border-bottom:0}
+.row .av{width:36px;height:36px;border-radius:50%;background:var(--block2);flex:none}
+.row .t{flex:1;min-width:0}.row .t b{display:block;font-weight:500;font-size:15px}.row .t small{display:block;color:var(--muted);font-size:12px}
+.row .r{text-align:right;font-variant-numeric:tabular-nums}.row .r b{display:block;font-weight:500;font-size:15px}.row .r small{display:block;color:var(--muted);font-size:12px}
+.row .chev{color:var(--muted);font-size:20px}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.card.filled{background:var(--block);border-color:transparent}
+.kv{display:flex;justify-content:space-between;gap:12px;font-size:14px}.kv span:first-child{color:var(--muted)}.kv.b span{color:var(--fg);font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}.grid2 div small{display:block;color:var(--muted);font-size:12px}.grid2 div b{font-weight:500;font-size:16px}
+.btn{font:inherit;font-weight:500;font-size:15px;border-radius:999px;padding:16px 20px;border:1.5px solid var(--fg);background:var(--fg);color:var(--bg);cursor:pointer;width:100%}
+.btn.sec{background:var(--bg);color:var(--fg)}
+.btn:disabled{opacity:.35;cursor:default}
+.footer{flex:none;padding:12px 16px calc(16px + env(safe-area-inset-bottom,0px));display:flex;gap:10px;border-top:1px solid var(--line)}
+.footer.plain{border-top:0}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;flex:none}.chips::-webkit-scrollbar{display:none}
+.tabs{display:flex;border-bottom:1px solid var(--line);flex:none;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tabs button{font:inherit;font-size:14px;font-weight:500;padding:10px 12px;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;color:var(--muted);white-space:nowrap;cursor:pointer;flex:none}
+.tabs button.on{color:var(--fg);border-bottom-color:var(--fg)}
+.chips button{font:inherit;font-weight:500;font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--fg);white-space:nowrap;cursor:pointer}
+.chips button.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.segs{display:flex;background:var(--block);border-radius:999px;padding:4px}.segs button{flex:1;font:inherit;font-weight:500;font-size:13px;padding:8px 0;border:0;border-radius:999px;background:none;color:var(--muted);cursor:pointer}.segs button.on{background:var(--bg);color:var(--fg)}
+.search{display:flex;align-items:center;gap:10px;background:var(--block);border-radius:999px;padding:12px 16px;color:var(--muted)}.search i{width:14px;height:14px;border:2px solid var(--muted);border-radius:50%}
+.status-line{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}.status-line i{width:8px;height:8px;border-radius:50%;background:var(--fg)}
+.two{display:flex;gap:10px}.two .card{flex:1}.card h4{margin:0;font-size:14px;font-weight:500}.card p{margin:0;color:var(--muted);font-size:12px}
+.amount{text-align:center;padding:24px 0 8px}.amount .l{color:var(--muted);font-size:13px}.amount .v{font-size:48px;font-weight:300;font-variant-numeric:tabular-nums;line-height:1.1;min-height:1.1em}.amount .s{color:var(--muted);font-size:12px;margin-top:6px}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--block);border-radius:12px;padding:10px}
+.keypad button{font:inherit;font-size:22px;font-weight:300;padding:12px 0;border:0;background:none;color:var(--fg);border-radius:8px;cursor:pointer}.keypad button:hover{background:var(--bg)}
+.note{color:var(--muted);font-size:12px;line-height:1.45;margin:0}
+.alloc{display:flex;gap:2px;border-radius:4px;overflow:hidden;height:12px}.alloc i{display:block;background:var(--fg)}
+.legend{display:flex;flex-wrap:wrap;gap:8px}.legend span{display:inline-flex;align-items:center;gap:8px;background:var(--block);border-radius:999px;padding:8px 12px;font-size:13px;font-weight:500}.legend span i{width:10px;height:10px;border-radius:50%;background:var(--fg)}.legend span small{color:var(--muted);font-weight:400;font-size:13px}
+.spark{display:block;width:100%;height:var(--h,140px);max-width:100%}
+.chart{position:relative;margin:0 -16px;padding:0 0 30px;touch-action:pan-y;cursor:crosshair;color:var(--fg);user-select:none}
+.chart .tip{position:absolute;top:0;transform:translateX(-50%);background:var(--fg);color:var(--bg);border-radius:8px;padding:6px 10px;font-size:12px;white-space:nowrap;pointer-events:none;display:flex;flex-direction:column;align-items:center;line-height:1.3}
+.chart .tip b{font-weight:500;font-size:14px;font-variant-numeric:tabular-nums}.chart .tip small{opacity:.7}
+.chart .chg{position:absolute;right:16px;bottom:0;background:var(--block);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}.chart .chg small{color:var(--muted);font-weight:400;margin-left:4px}.chart .chg.neg{text-decoration:none}
+.delta{display:flex;align-items:center;gap:8px;font-size:14px}.delta b{font-weight:500}.delta small{color:var(--muted);font-size:14px}.delta::before{content:"";width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:6px solid var(--fg)}
+.cashrow{display:flex;align-items:center;justify-content:space-between;gap:12px}.cashrow .btn{width:auto;padding:12px 24px}
+.goal{display:flex;flex-direction:column;gap:8px;padding:12px 0;border-bottom:1px solid var(--line);background:none;border-left:0;border-right:0;border-top:0;font:inherit;color:var(--fg);text-align:left;cursor:pointer;width:100%}.goal:last-child{border-bottom:0}
+.goal .hd{display:flex;justify-content:space-between;gap:12px}.goal .hd b{font-weight:500;font-size:15px}.goal .hd span{color:var(--muted);font-variant-numeric:tabular-nums}
+.goal .bar{height:8px;border-radius:4px;background:var(--block2);overflow:hidden}.goal .bar i{display:block;height:100%;background:var(--fg)}
+.goal small{color:var(--muted);font-size:12px}
+.sect{display:flex;justify-content:space-between;align-items:baseline}.sect h3{margin:0;font-size:20px;font-weight:500}.sect button{font:inherit;font-size:13px;font-weight:500;background:var(--block);border:0;border-radius:999px;padding:8px 14px;color:var(--fg);cursor:pointer}
+.code{display:flex;gap:8px}.code i{flex:1;height:56px;border:1.5px solid var(--line);border-radius:10px;display:grid;place-items:center;font-size:24px;font-weight:500}.code i.on{border-color:var(--fg)}
+.success{display:flex;flex-direction:column;align-items:center;gap:10px;padding:24px 0 8px;text-align:center}.success i{width:64px;height:64px;border-radius:50%;background:var(--fg)}.success b{font-size:24px;font-weight:500}.success span{color:var(--muted)}
+.scrim{position:absolute;inset:0;background:var(--scrim);border:0;cursor:pointer}
+.drawer{position:absolute;top:0;bottom:0;left:0;width:320px;max-width:85%;background:var(--bg);border-radius:0 20px 20px 0;display:flex;flex-direction:column;animation:drawer .3s cubic-bezier(.2,.7,.2,1)}
+@keyframes drawer{from{transform:translateX(-100%)}to{transform:none}}
+.drawer .hd{padding:56px 20px 16px;display:flex;flex-direction:column;gap:8px}.drawer .hd .av{width:44px;height:44px;border-radius:50%;background:var(--block2)}.drawer .hd b{font-weight:500;font-size:16px}
+.drawer .sw{align-self:flex-start;background:var(--block);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:500}
+.drawer .list{padding:0 20px;flex:1;overflow:auto}
+.drawer .out{padding:16px 20px 24px;color:var(--muted);font-weight:500;background:none;border:0;font:inherit;text-align:left;cursor:pointer}
+.need{background:var(--block);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}.need b{font-weight:500}.need p{margin:0;color:var(--muted);font-size:12px}
+[hidden]{display:none!important}
+button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="stage"><span><b>Finamex</b> · wireframes v3 · click anything</span><span class="jump"><button data-go="home">Home</button><button data-go="portfolio">Portfolio</button><button data-go="explore">Explore</button><button data-go="activity">Activity</button><button data-go="notif">Notifications</button></span></div>
+<div class="phone" id="phone"></div>
+
+<script>
+(function(){
+  const phone = document.getElementById('phone');
+  const state = { amount: '50000', term: '28 d', side: 'Buy', code: 0, cat: 'All', seg: 'All' };
+  const fmt = n => '$' + Number(n||0).toLocaleString('en-US');
+  const status = () => `<div class="status"><span>9:41</span><span>●●●</span></div>`;
+  const topbar = (title, o={}) => `<div class="topbar">
+    ${o.back ? `<button class="icon" data-act="back" aria-label="Back">←</button>` : o.close ? `` : `<button class="icon" data-act="menu" aria-label="Menu"><span class="ham"><i></i><i></i><i></i></span></button>`}
+    <h1>${title}</h1>
+    ${o.action ? `<button class="tb-action" data-act="${o.actionAct||'none'}">${o.action}</button>` : ''}
+    ${o.noBell ? '' : `<button class="icon" data-act="notif" aria-label="Notifications"><span class="bell"></span></button>`}
+  </div>`;
+  const navbar = active => `<nav class="navbar">${['Home','Portfolio','Explore','Activity'].map(l=>`<button class="${l===active?'active':''}" data-tab="${l.toLowerCase()}"><span class="pill"><i></i></span>${l}</button>`).join('')}</nav>`;
+  const row = (l1,l2,r1,r2,o={}) => `<button class="row" ${o.act?`data-act="${o.act}"`:''}>${o.icon?'<span class="av"></span>':''}<span class="t"><b>${l1}</b>${l2?`<small>${l2}</small>`:''}</span>${(r1||r2)?`<span class="r">${r1?`<b>${r1}</b>`:''}${r2?`<small>${r2}</small>`:''}</span>`:''}${o.chev===false?'':'<span class="chev">›</span>'}</button>`;
+  const kv = (k,v,b) => `<div class="kv ${b?'b':''}"><span>${k}</span><span>${v}</span></div>`;
+  const hero = (l,v,s) => `<div class="hero"><div class="l">${l}</div><div class="v">${v}</div>${s?`<div class="s">${s}</div>`:''}</div>`;
+  const segs = (items, on, key) => `<div class="segs">${items.map(i=>`<button class="${i===on?'on':''}" data-seg="${key}:${i}">${i}</button>`).join('')}</div>`;
+  // Interactive chart: seeded random walk per range → SVG line + area, scrubbable with a cursor and tooltip.
+  const RANGES = { '1D':{days:1,n:48}, '1W':{days:7,n:56}, '1M':{days:30,n:60}, '3M':{days:90,n:72}, '6M':{days:180,n:80}, 'YTD':{days:294,n:80}, '1Y':{days:365,n:90}, 'MAX':{days:1095,n:100} };
+  const charts = {};
+  const chart = (key, o) => {
+    const range = o.range || state.range || '1Y'; const R = RANGES[range] || RANGES['1Y']; const n = R.n, h = o.h || 140, w = 380;
+    let s = (o.seed*131 + range.length*17 + range.charCodeAt(0)) % 233280, v = 0, pts = [];
+    const rnd = () => { s = (s*9301+49297)%233280; return s/233280; };
+    for (let i=0;i<n;i++){ v += (rnd()-0.5+(o.drift||0.03))*(o.vol||1); pts.push(v); }
+    const min = Math.min(...pts), max = Math.max(...pts); const span = max-min || 1;
+    // map the walk onto real values so the last point is the current figure
+    const vals = pts.map(p => o.base * (1 + (p - pts[n-1]) / span * (o.spread||0.12)));
+    const end = new Date(2026,9,21,15,0); const dates = vals.map((_,i)=> new Date(end.getTime() - (n-1-i)/(n-1)*R.days*864e5));
+    const vmin = Math.min(...vals), vmax = Math.max(...vals), vs = vmax-vmin || 1;
+    const x = i => (i/(n-1))*w, y = p => h-10-((p-vmin)/vs)*(h-28);
+    const d = vals.map((p,i)=>`${i?'L':'M'}${x(i).toFixed(1)} ${y(p).toFixed(1)}`).join(' ');
+    const chg = (vals[n-1]-vals[0])/vals[0]*100;
+    charts[key] = { vals, dates, fmt:o.fmt, range, w, h, y, n };
+    return `<div class="chart" data-chart="${key}" style="--h:${h}px">
+      <svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="g${key}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".16"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs><path class="area" d="${d} L${w} ${h} L0 ${h} Z" fill="url(#g${key})"/><path class="line" d="${d}" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/><line class="cur" x1="0" x2="0" y1="0" y2="${h}" stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="3 3" opacity="0"/><circle class="dot" cx="${w}" cy="${y(vals[n-1]).toFixed(1)}" r="4" fill="currentColor"/></svg>
+      <div class="tip" hidden><b></b><small></small></div>
+      <div class="chg ${chg<0?'neg':''}">${chg>=0?'+':''}${chg.toFixed(2)}% <small>${range}</small></div>
+    </div>`;
+  };
+  const money = v => '$' + Math.round(v).toLocaleString('en-US');
+  const spark = (seed,h) => chart('home'+seed, { seed, h, base:2345600, spread:0.08, fmt:money });
+  const goals = [['Travel','Moderate strategy','$21,000','$60,000',35],['Emergency fund','Conservative strategy','$48,500','$50,000',97],['New apartment','Growth strategy','$15,000','$400,000',4]];
+  const goal = g => `<button class="goal" data-act="none"><span class="hd"><b>${g[0]}</b><span>${g[4]}%</span></span><span class="bar"><i style="width:${g[4]}%"></i></span><small>${g[2]} of ${g[3]} · ${g[1]}</small></button>`;
+
+  const instruments = [
+    ['Cetes 28 days','Cetes · matures 24 Nov','9.85%','rate','Cetes'],
+    ['Pesos 91 days','Term deposit · min $1,000','9.95%','rate','Pesos'],
+    ['Finamex Liquidez','Fund · daily liquidity','$1.2345','+9.4% 1y','Funds'],
+    ['WALMEX','Stock · BMV','$62.40','+1.2%','Stocks'],
+    ['US dollar','Dollars · min $1,000','$18.42','buy rate','Dollars'],
+    ['Finamex Global','Fund · international','$3.1004','+18.2% 1y','Funds'],
+    ['Cetes 91 days','Cetes · matures 26 Jan','9.92%','rate','Cetes'],
+    ['GFNORTE','Stock · BMV','$158.10','+0.6%','Stocks'],
+  ];
+
+  const screens = {
+    home: () => `${status()}${topbar('Finamex')}<div class="content">
+      <div style="color:var(--muted);font-size:13px">Contract C100504445 ⌄</div>
+      ${hero('Total value','$2,345,600','+$12,400 (0.5%) today')}
+      ${chart('home',{seed:7,h:96,base:2345600,spread:0.06,fmt:money})}
+      ${segs(['1D','1W','1M','YTD','1Y'],state.range||'1Y','range')}
+      <div class="qa"><button data-act="deposit"><i></i>Deposit</button><button data-act="deposit"><i></i>Withdraw</button><button data-tab="explore"><i></i>Invest</button></div>
+      <div class="label">Holdings</div>
+      <div class="list">${[['Cetes','$620,000','+9.9%'],['Pesos','$450,000','+9.6%'],['Funds','$780,000','+11.2%'],['Stocks','$310,600','−1.3%'],['Dollars','$185,000','+2.4%']].map(h=>row(h[0],'',h[1],h[2],{icon:true,act:'position'})).join('')}</div>
+      <div class="label">Upcoming</div>
+      <div class="list">${row('Cetes 28d matures','24 Nov · $120,000','Auto-reinvest','',{act:'position'})}${row('Recurring deposit','Monthly · next 1 Nov','$10,000','',{act:'deposit'})}</div>
+      <div class="label">Insights</div>
+      <div class="card filled"><h4>Cetes rates rose for a third week</h4><p>28-day paid 9.85% at Tuesday's auction, up 0.07 points.</p></div>
+    </div>${navbar('Home')}`,
+
+    explore: () => `${status()}${topbar('Explore')}<div class="content tight">
+      <div class="search"><i></i>Search instruments</div>
+      <div class="tabs">${['All','Cetes','Pesos','Funds','Stocks','Dollars'].map(c=>`<button class="${state.cat===c?'on':''}" data-cat="${c}">${c}</button>`).join('')}</div>
+      <div class="status-line"><i></i>Cetes auction open until 13:00 · BMV open until 15:00</div>
+      <div class="list">${instruments.filter(i=>state.cat==='All'||i[4]===state.cat).map(i=>row(i[0],i[1],i[2],i[3],{icon:true,act:'instrument'})).join('')}</div>
+      <div class="label">Invest for me</div>
+      <div class="two"><div class="card filled"><h4>+360 goals</h4><p>Strategy from your profile</p></div><div class="card filled"><h4>Managed portfolios</h4><p>Wealth contracts</p></div></div>
+    </div>${navbar('Explore')}`,
+
+    instrument: () => `${status()}${topbar('',{back:true,noBell:true,action:'☆'})}<div class="content tight">
+      <div><div style="color:var(--muted);font-size:13px">Cetes</div><div style="font-size:24px;font-weight:500">Cetes 28 days</div></div>
+      ${hero('Last auction rate','9.85%','Next auction Tue 27 Oct · orders close 13:00')}
+      ${chart('inst',{seed:23,h:140,base:9.85,spread:0.12,vol:1.4,drift:-0.02,fmt:v=>v.toFixed(2)+'%'})}
+      ${segs(['1M','3M','6M','1Y','MAX'],state.range||'1Y','range')}
+      <div class="card"><div class="grid2"><div><small>Term</small><b>28 days</b></div><div><small>Matures</small><b>24 Nov 2026</b></div><div><small>Minimum</small><b>$100</b></div><div><small>Liquidity</small><b>Sell before maturity</b></div><div><small>Buy window</small><b>9:00–13:00</b></div><div><small>Auto-reinvest</small><b>On by default</b></div></div></div>
+      <button class="card filled" data-act="position" style="font:inherit;text-align:left;cursor:pointer;color:var(--fg)"><span style="color:var(--muted);font-size:12px">You hold</span>${kv('$120,000 in 28-day Cetes','View position ›',true)}</button>
+      <div class="label">How it works</div>
+      <p class="note" style="font-size:13px">Government debt bought at auction and paid back at face value on maturity. The return is the discount.</p>
+    </div><div class="footer"><button class="btn sec" data-act="order:Sell">Sell</button><button class="btn" data-act="order:Buy">Buy</button></div>`,
+
+    order: () => {
+      const amt = Number(state.amount||0); const rate = 0.0985; const days = parseInt(state.term); const ret = Math.round(amt*rate*days/360);
+      return `${status()}${topbar('Cetes 28 days',{back:true,noBell:true,action:'✕',actionAct:'back'})}<div class="content">
+      ${segs(['Buy','Sell'],state.side,'side')}
+      <div class="amount"><div class="l">Amount</div><div class="v">${fmt(state.amount)}</div><div class="s">Available cash $65,797 · <b style="font-weight:500;color:var(--fg)">Max</b></div></div>
+      <div class="label">Term</div>
+      <div class="chips">${['28 d','91 d','182 d','364 d'].map(t=>`<button class="${state.term===t?'on':''}" data-term="${t}">${t}</button>`).join('')}</div>
+      <div class="card">${kv('Rate (last auction)','9.85%')}${kv('Matures','24 Nov 2026')}${kv('Estimated return',fmt(ret))}${kv('Auto-reinvest','On')}${kv(state.side==='Buy'?'You get at maturity':'You receive',fmt(amt+ret),true)}</div>
+      <p class="note">Final rate is set at auction. You can cancel until 13:00 on auction day.</p>
+      <div class="keypad">${['1','2','3','4','5','6','7','8','9','000','0','⌫'].map(k=>`<button data-key="${k}">${k}</button>`).join('')}</div>
+    </div><div class="footer plain"><button class="btn" data-act="review" ${amt<100?'disabled':''}>Review order</button></div>`;
+    },
+
+    review: () => {
+      const amt = Number(state.amount||0); const ret = Math.round(amt*0.0985*parseInt(state.term)/360);
+      return `${status()}${topbar('Review order',{back:true,noBell:true})}<div class="content">
+      <div class="card"><b style="font-weight:500;font-size:16px">${state.side} Cetes ${state.term.replace(' d',' days')}</b>${kv('Amount',fmt(amt))}${kv('Rate (last auction)','9.85%')}${kv('Matures','24 Nov 2026')}${kv('Fees','None')}${kv('From','Contract C100504445 · cash')}${kv('You get at maturity',fmt(amt+ret),true)}</div>
+      <p class="note">Orders close at 13:00. The final rate is confirmed after the auction.</p>
+      <div class="label">Security code</div>
+      <div class="code">${[0,1,2,3,4].map(i=>`<i class="${i<state.code?'on':''}">${i<state.code?'•':''}</i>`).join('')}</div>
+      <p class="note">Sent by SMS to •••• 4471 · Resend in 0:42 · Use email instead</p>
+      <div class="keypad">${['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>k?`<button data-code="${k}">${k}</button>`:'<span></span>').join('')}</div>
+    </div><div class="footer plain"><button class="btn" data-act="receipt" ${state.code<5?'disabled':''}>Confirm order</button></div>`;
+    },
+
+    receipt: () => `${status()}<div class="topbar"><h1></h1><button class="tb-action" data-act="home">Done</button></div><div class="content">
+      <div class="success"><i></i><b>Order placed</b><span>${state.side} Cetes ${state.term.replace(' d',' days')} · ${fmt(state.amount)}</span></div>
+      <div class="card">${kv('Status','Pending auction')}${kv('Tracking key','FMX-20261021-48213')}${kv('Date','21 Oct 2026 · 10:02')}${kv('Contract','C100504445')}${kv('Rate','Confirmed after 13:00')}${kv('Matures','24 Nov 2026')}</div>
+      <div class="two"><button class="btn sec" data-act="none">Share receipt</button><button class="btn sec" data-act="position">View position</button></div>
+      <p class="note">You can cancel this order until 13:00 today from Portfolio › Open orders.</p>
+    </div><div class="footer plain"><button class="btn" data-act="home">Back to Home</button></div>`,
+
+    portfolio: () => `${status()}${topbar('Portfolio')}<div class="content">
+      <div class="hero"><div class="l">Total value</div><div class="v">$2,345,600</div></div>
+      <div style="display:flex;flex-direction:column;gap:4px"><div class="delta"><b>$12,400 (0.5%)</b><small>Today</small></div><div class="delta"><b>$84,200 (3.7%)</b><small>Unrealised gain</small></div></div>
+      ${chart('portfolio',{seed:11,h:150,base:2345600,spread:0.1,fmt:money})}
+      ${segs(['1W','1M','3M','6M','YTD','1Y','MAX'],state.range||'1Y','range')}
+      <div class="cashrow"><div><div style="color:var(--muted);font-size:13px">Available cash</div><div style="font-size:24px;font-weight:500;font-variant-numeric:tabular-nums">$65,797</div></div><button class="btn" data-act="deposit">Deposit</button></div>
+      <div class="sect"><h3>Allocation</h3></div>
+      <div class="chips">${['Category','Instrument','Currency'].map(c=>`<button class="${(state.alloc||'Category')===c?'on':''}" data-alloc="${c}">${c}</button>`).join('')}</div>
+      ${(state.alloc||'Category')==='Currency'
+        ? `<div class="alloc"><i style="flex:91"></i><i style="flex:9;opacity:.35"></i></div><div class="legend"><span><i></i>MXN <small>91%</small></span><span><i style="opacity:.35"></i>USD <small>9%</small></span></div>`
+        : (state.alloc||'Category')==='Instrument'
+        ? `<div class="alloc"><i style="flex:21"></i><i style="flex:19;opacity:.85"></i><i style="flex:16;opacity:.7"></i><i style="flex:13;opacity:.55"></i><i style="flex:9;opacity:.4"></i><i style="flex:22;opacity:.25"></i></div><div class="legend"><span><i></i>Finamex Global <small>21%</small></span><span><i style="opacity:.85"></i>Pesos 91d <small>19%</small></span><span><i style="opacity:.7"></i>Cetes 28d <small>16%</small></span><span><i style="opacity:.55"></i>Finamex Liquidez <small>13%</small></span><span><i style="opacity:.4"></i>US dollar <small>9%</small></span><span><i style="opacity:.25"></i>Other (6) <small>22%</small></span></div>`
+        : `<div class="alloc"><i style="flex:26"></i><i style="flex:19;opacity:.8"></i><i style="flex:33;opacity:.6"></i><i style="flex:13;opacity:.4"></i><i style="flex:9;opacity:.25"></i></div><div class="legend"><span><i></i>Cetes <small>26%</small></span><span><i style="opacity:.8"></i>Pesos <small>19%</small></span><span><i style="opacity:.6"></i>Funds <small>33%</small></span><span><i style="opacity:.4"></i>Stocks <small>13%</small></span><span><i style="opacity:.25"></i>Dollars <small>9%</small></span></div>`}
+      <div class="sect"><h3>Positions</h3></div>
+      <div class="list">${[['Cetes','2 positions','$620,000','+9.9%'],['Pesos','1 deposit','$450,000','+9.6%'],['Funds','3 funds','$780,000','+11.2%'],['Stocks','4 tickers','$310,600','−1.3%'],['Dollars','USD 10,000','$185,000','+2.4%']].map(h=>row(h[0],h[1],h[2],h[3],{icon:true,act:'position'})).join('')}</div>
+      <div class="sect"><h3>Goals</h3><button data-act="none">New goal</button></div>
+      <div class="list">${goals.map(goal).join('')}</div>
+      <div class="list">${row('Statements &amp; tax documents','','','',{act:'none'})}</div>
+    </div>${navbar('Portfolio')}`,
+
+    activity: () => `${status()}${topbar('Activity')}<div class="content tight">
+      ${segs(['All','Open','Scheduled','History'],state.act||'All','act')}
+      ${['All','Open'].includes(state.act||'All') ? `<div class="label">Open orders</div>
+      <div class="list">${row('Buy Cetes 28 days','Pending auction · closes 13:00','$50,000','Cancel',{act:'none'})}${row('Buy USD 2,500','Limit $18.30 · expires 28 Oct','Open','Cancel',{act:'none'})}${row('Sell USD 1,000','Stop $18.60 · expires 23 Oct','Open','Cancel',{act:'none'})}</div>` : ''}
+      ${['All','Scheduled'].includes(state.act||'All') ? `<div class="label">Scheduled</div>
+      <div class="list">${row('Recurring deposit','Monthly · next 1 Nov','$10,000','Edit',{act:'deposit'})}${row('Cetes 28d auto-reinvest','On maturity · 24 Nov','$120,000','',{act:'position'})}${row('Withdrawal','Scheduled 30 Oct · to BBVA ···4471','$15,000','Cancel',{act:'none'})}</div>` : ''}
+      ${['All','History'].includes(state.act||'All') ? `<div class="label">History</div>
+      <div class="list">${row('Deposit received','SPEI from BBVA · today 09:15','+$20,000','Receipt',{icon:true,act:'none'})}${row('Bought USD 5,000','14 Oct · $18.35','−$91,750','Receipt',{icon:true,act:'position'})}${row('Pesos deposit matured','28 Sep · reinvested at 9.6%','$45,000','Receipt',{icon:true,act:'none'})}${row('Bought Finamex Global','12 Sep · 3,225 units','−$10,000','Receipt',{icon:true,act:'position'})}${row('Withdrawal sent','1 Sep · to BBVA ···4471','−$8,000','Receipt',{icon:true,act:'none'})}</div>` : ''}
+    </div>${navbar('Activity')}`,
+
+    position: () => `${status()}${topbar('',{back:true,noBell:true,action:'···'})}<div class="content tight">
+      <div><div style="color:var(--muted);font-size:13px">Dollars</div><div style="font-size:24px;font-weight:500">US dollar</div></div>
+      ${hero('Value in pesos','$185,000','+$4,350 (2.4%) since you bought')}
+      <div class="card"><div class="grid2"><div><small>You hold</small><b>USD 10,000</b></div><div><small>Average cost</small><b>$18.07</b></div><div><small>Current rate</small><b>$18.50 sell</b></div><div><small>Unrealised gain</small><b>+$4,350</b></div></div></div>
+      ${chart('pos',{seed:41,h:130,base:185000,spread:0.09,fmt:money})}
+      ${segs(['1W','1M','3M','1Y','MAX'],state.range||'1Y','range')}
+      <div class="label">History</div>
+      <div class="list">${row('Bought USD 5,000','14 Oct · $18.35','$91,750','Receipt',{act:'none'})}${row('Bought USD 5,000','2 Sep · $17.80','$89,000','Receipt',{act:'none'})}</div>
+    </div><div class="footer"><button class="btn sec" data-act="order:Sell">Sell</button><button class="btn" data-act="order:Buy">Buy more</button></div>`,
+
+    notif: () => `${status()}${topbar('Notifications',{back:true,noBell:true,action:'Mark all read'})}<div class="content tight">
+      ${segs(['All','Notices','Movements'],state.seg,'seg')}
+      <div class="need"><b>Needs your action</b><p>Confirm your balances for the annual audit · Update your tax data</p><button class="btn" data-act="none">Review (2)</button></div>
+      <div class="label">Today</div>
+      <div class="list">${row('Cetes order filled','28 days at 9.85% · $50,000','','10:02',{icon:true,act:'position'})}${row('Deposit received','SPEI from BBVA · $20,000','','09:15',{icon:true,act:'none'})}</div>
+      <div class="label">Earlier</div>
+      <div class="list">${row('Rate alert','USD reached $18.30','','Mon',{icon:true,act:'position'})}${row('Statement ready','September 2026','','1 Oct',{icon:true,act:'none'})}${row('Pesos deposit matured','$45,000 reinvested at 9.6%','','28 Sep',{icon:true,act:'none'})}</div>
+    </div>`,
+
+    deposit: () => `${status()}${topbar('Deposit',{back:true,noBell:true})}<div class="content">
+      <div class="card filled"><span style="color:var(--muted);font-size:12px">Transfer to your Finamex CLABE</span><b style="font-size:20px;font-weight:500;font-variant-numeric:tabular-nums">0021 8000 1234 5678 90</b><button class="btn sec" data-act="copy">Copy CLABE</button></div>
+      <p class="note">Send a SPEI from your bank. Deposits arrive in minutes during banking hours and show on Home.</p>
+      <div class="label">Or tell us about a transfer</div>
+      <div class="list">${row('Register a deposit you made','Amount · source account · date','','',{act:'none'})}${row('Schedule a recurring deposit','Weekly · fortnightly · monthly','','',{act:'none'})}</div>
+      <div class="label">Source accounts</div>
+      <div class="list">${row('BBVA ···4471','Validated','','',{icon:true,act:'none'})}${row('Add an account','18-digit CLABE · validated with a test deposit','','',{act:'none'})}</div>
+    </div>`,
+  };
+
+  // navigation
+  const tabs = ['home','portfolio','explore','activity'];
+  let stack = ['home'];
+  let drawer = false;
+  function render(kind){
+    const name = stack[stack.length-1];
+    phone.querySelectorAll('.screen').forEach(s=>s.remove());
+    const el = document.createElement('div'); el.className = 'screen' + (kind?` enter-${kind}`:''); el.innerHTML = screens[name]();
+    phone.appendChild(el);
+    if (drawer){
+      const s = document.createElement('button'); s.className='scrim'; s.setAttribute('aria-label','Close menu'); s.dataset.act='closeMenu'; el.appendChild(s);
+      const d = document.createElement('div'); d.className='drawer';
+      d.innerHTML = `<div class="hd"><span class="av"></span><b>María Fernanda López</b><span class="sw">Contract C100504445 ⌄</span></div><div class="list">${[['Profile &amp; verification','Tier 2 · upgrade'],['Bank accounts','Finamex CLABE · 2 destinations'],['Beneficiaries',''],['Security','Face ID on'],['Tax data',''],['Notification settings',''],['Help &amp; support',''],['Legal &amp; documents',''],['Refer Finamex','']].map(i=>row(i[0],i[1],'','',{act:'none'})).join('')}</div><button class="out" data-act="closeMenu">Sign out</button>`;
+      el.appendChild(d);
+    }
+  }
+  function push(name){ stack.push(name); render('push'); }
+  function pop(){ if (stack.length>1) stack.pop(); render('pop'); }
+  function go(name){ stack = [name]; drawer=false; render('fade'); }
+
+  // chart scrubbing
+  const fmtDate = (d, range) => range==='1D' ? d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year: range==='MAX'?'numeric':undefined});
+  function scrub(e){
+    const el = e.target.closest('.chart'); if (!el) return;
+    const c = charts[el.dataset.chart]; if (!c) return;
+    const svg = el.querySelector('svg'), rect = svg.getBoundingClientRect();
+    const px = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+    const i = Math.round(px/rect.width*(c.n-1));
+    const vx = (i/(c.n-1))*c.w, vy = c.y(c.vals[i]);
+    const cur = svg.querySelector('.cur'); cur.setAttribute('x1',vx); cur.setAttribute('x2',vx); cur.setAttribute('opacity','.6');
+    const dot = svg.querySelector('.dot'); dot.setAttribute('cx',vx); dot.setAttribute('cy',vy.toFixed(1));
+    const tip = el.querySelector('.tip'); tip.hidden=false; tip.querySelector('b').textContent = c.fmt(c.vals[i]); tip.querySelector('small').textContent = fmtDate(c.dates[i], c.range);
+    const tw = tip.offsetWidth/2; tip.style.left = Math.max(tw, Math.min(rect.width - tw, px)) + 'px';
+  }
+  function unscrub(e){
+    const el = e.target.closest('.chart'); if (!el) return;
+    const c = charts[el.dataset.chart]; if (!c) return;
+    const svg = el.querySelector('svg'); svg.querySelector('.cur').setAttribute('opacity','0');
+    const dot = svg.querySelector('.dot'); dot.setAttribute('cx',c.w); dot.setAttribute('cy',c.y(c.vals[c.n-1]).toFixed(1));
+    el.querySelector('.tip').hidden = true;
+  }
+  phone.addEventListener('pointermove', scrub); phone.addEventListener('pointerdown', scrub);
+  phone.addEventListener('pointerleave', unscrub, true); phone.addEventListener('pointerup', unscrub); phone.addEventListener('pointercancel', unscrub);
+  document.addEventListener('pointerout', e => { if (e.target.closest && e.target.closest('.chart') && !(e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.chart'))) unscrub(e); });
+
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-act],[data-tab],[data-go],[data-cat],[data-term],[data-key],[data-code],[data-seg],[data-alloc]');
+    if (!t) return;
+    if (t.dataset.go){ go(t.dataset.go); return; }
+    if (t.dataset.tab){ go(t.dataset.tab); return; }
+    if (t.dataset.cat){ state.cat = t.dataset.cat; render(); return; }
+    if (t.dataset.term){ state.term = t.dataset.term; render(); return; }
+    if (t.dataset.seg){ const [k,v]=t.dataset.seg.split(':'); if(k==='side') state.side=v; if(k==='seg') state.seg=v; if(k==='act') state.act=v; if(k==='range') state.range=v; render(); return; }
+    if (t.dataset.alloc){ state.alloc = t.dataset.alloc; render(); return; }
+    if (t.dataset.key){ const k=t.dataset.key; if(k==='⌫') state.amount=state.amount.slice(0,-1); else if(state.amount.length<9) state.amount=(state.amount==='0'?'':state.amount)+k; render(); return; }
+    if (t.dataset.code){ const k=t.dataset.code; if(k==='⌫') state.code=Math.max(0,state.code-1); else state.code=Math.min(5,state.code+1); render(); return; }
+    const a = t.dataset.act;
+    if (a==='back'){ pop(); return; }
+    if (a==='menu'){ drawer=true; render(); return; }
+    if (a==='closeMenu'){ drawer=false; render(); return; }
+    if (a==='notif'){ push('notif'); return; }
+    if (a==='home'){ state.code=0; go('home'); return; }
+    if (a==='instrument'){ push('instrument'); return; }
+    if (a==='position'){ push('position'); return; }
+    if (a==='deposit'){ push('deposit'); return; }
+    if (a.startsWith('order:')){ state.side=a.split(':')[1]; state.code=0; push('order'); return; }
+    if (a==='review'){ state.code=0; push('review'); return; }
+    if (a==='receipt'){ push('receipt'); return; }
+    if (a==='copy'){ try{ navigator.clipboard.writeText('002180001234567890').catch(()=>{}); }catch(_){} t.textContent='Copied'; setTimeout(()=>{t.textContent='Copy CLABE';},1200); return; }
+  });
+  render();
+})();
+</script>
+</body>
+</html>
