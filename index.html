@@ -107,6 +107,15 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .drawer .out{padding:16px 20px 24px;color:var(--muted);font-weight:500;background:none;border:0;font:inherit;text-align:left;cursor:pointer}
 .need{background:var(--block);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}.need b{font-weight:500}.need p{margin:0;color:var(--muted);font-size:12px}
 [hidden]{display:none!important}
+.hscroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px;scroll-snap-type:x mandatory;flex:none}.hscroll::-webkit-scrollbar{display:none}
+.nba{flex:none;width:260px;scroll-snap-align:start;background:var(--block);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.nba .tag{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}.nba h4{margin:0;font-size:15px;font-weight:500}.nba p{margin:0 0 6px;color:var(--muted);font-size:12px;line-height:1.4;flex:1}.nba .btn{padding:10px 16px;font-size:13px}
+.goalcard{border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;background:none;font:inherit;color:var(--fg);text-align:left;cursor:pointer;width:100%}
+.goalcard .hd{display:flex;justify-content:space-between;align-items:center}.goalcard .hd b{font-weight:500;font-size:15px}.goalcard .chev{color:var(--muted);font-size:20px}
+.goalcard .gsum{font-size:22px;font-weight:300;font-variant-numeric:tabular-nums}.goalcard .gsum small{display:block;font-size:12px;color:var(--muted);font-weight:400}
+.goalcard .mini{display:grid;grid-template-columns:110px 1fr 36px;align-items:center;gap:10px;font-size:12px}.goalcard .mini span:last-child{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.goalcard .bar{height:6px;border-radius:3px;background:var(--block2);overflow:hidden}.goalcard .bar i{display:block;height:100%;background:var(--fg)}
+.learn{flex:none;width:180px;scroll-snap-align:start;display:flex;flex-direction:column;gap:6px;background:none;border:0;padding:0;font:inherit;color:var(--fg);text-align:left;cursor:pointer}.learn .box{height:110px;border-radius:12px}.learn b{font-weight:500;font-size:14px;line-height:1.3}.learn small{color:var(--muted);font-size:12px}
 button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 </style>
 </head>
@@ -159,6 +168,14 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
   const goals = [['Travel','Moderate strategy','$21,000','$60,000',35],['Emergency fund','Conservative strategy','$48,500','$50,000',97],['New apartment','Growth strategy','$15,000','$400,000',4]];
   const goal = g => `<button class="goal" data-act="none"><span class="hd"><b>${g[0]}</b><span>${g[4]}%</span></span><span class="bar"><i style="width:${g[4]}%"></i></span><small>${g[2]} of ${g[3]} · ${g[1]}</small></button>`;
 
+  const nba = [
+    ['Maturing soon','Your Cetes 28d mature 24 Nov','$120,000 rolls into a new 28-day Cetes. Change the term or move it to cash.','Choose','position'],
+    ['Idle cash','$65,797 is earning nothing','Pesos 91 days pays 9.95% with a $1,000 minimum.','Invest it','instrument'],
+    ['Account','Finish Tier 3 verification','Lifts your deposit limit and unlocks US stocks. Takes about 3 minutes.','Continue','none'],
+  ];
+  const watch = [['GFNORTE','Stock · BMV','$158.10','+0.6%'],['Finamex Global','Fund · international','$3.1004','+18.2% 1y'],['US dollar','Buy rate','$18.42','−0.3%']];
+  const learn = [['Article','How Cetes auctions work','4 min read'],['Video','Funds vs stocks in 90 seconds','1:30'],['Market','Cetes rates rose for a third week','Weekly note · 2 min'],['Guide','Investing in dollars','5 min read']];
+
   const instruments = [
     ['Cetes 28 days','Cetes · matures 24 Nov','9.85%','rate','Cetes'],
     ['Pesos 91 days','Term deposit · min $1,000','9.95%','rate','Pesos'],
@@ -177,13 +194,20 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
       ${chart('home',{seed:7,h:96,base:2345600,spread:0.06,fmt:money})}
       ${segs(['1D','1W','1M','YTD','1Y'],state.range||'1Y','range')}
       <div class="qa"><button data-act="deposit"><i></i>Deposit</button><button data-act="deposit"><i></i>Withdraw</button><button data-tab="explore"><i></i>Invest</button></div>
-      <div class="label">Holdings</div>
-      <div class="list">${[['Cetes','$620,000','+9.9%'],['Pesos','$450,000','+9.6%'],['Funds','$780,000','+11.2%'],['Stocks','$310,600','−1.3%'],['Dollars','$185,000','+2.4%']].map(h=>row(h[0],'',h[1],h[2],{icon:true,act:'position'})).join('')}</div>
-      <div class="label">Upcoming</div>
-      <div class="list">${row('Cetes 28d matures','24 Nov · $120,000','Auto-reinvest','',{act:'position'})}${row('Recurring deposit','Monthly · next 1 Nov','$10,000','',{act:'deposit'})}</div>
-      <div class="label">Insights</div>
-      <div class="card filled"><h4>Cetes rates rose for a third week</h4><p>28-day paid 9.85% at Tuesday's auction, up 0.07 points.</p></div>
+      <div class="sect"><h3>For you</h3></div>
+      <div class="hscroll">${nba.map(n=>`<div class="nba"><span class="tag">${n[0]}</span><h4>${n[1]}</h4><p>${n[2]}</p><button class="btn sec" data-act="${n[4]}">${n[3]}</button></div>`).join('')}</div>
+      <button class="goalcard" data-act="goals"><span class="hd"><b>Your goals</b><span class="chev">›</span></span><span class="gsum">$84,500 <small>saved across 3 goals · 2 on track</small></span>${goals.map(g=>`<span class="mini"><span>${g[0]}</span><span class="bar"><i style="width:${g[4]}%"></i></span><span>${g[4]}%</span></span>`).join('')}</button>
+      <div class="sect"><h3>Watchlist</h3><button data-tab="explore">Edit</button></div>
+      <div class="list">${watch.map(w=>row(w[0],w[1],w[2],w[3],{icon:true,act:'instrument'})).join('')}</div>
+      <div class="sect"><h3>Learn</h3><button data-act="none">See all</button></div>
+      <div class="hscroll">${learn.map(l=>`<button class="learn" data-act="none"><span class="box">${l[0]}</span><b>${l[1]}</b><small>${l[2]}</small></button>`).join('')}</div>
     </div>${navbar('Home')}`,
+
+    goals: () => `${status()}${topbar('Goals',{back:true,noBell:true,action:'New',actionAct:'none'})}<div class="content">
+      ${hero('Saved toward goals','$84,500','2 of 3 on track')}
+      <div class="list">${goals.map(goal).join('')}</div>
+      <div class="card filled"><h4>Emergency fund is nearly there</h4><p>$1,500 left. Your monthly deposit gets you there by 1 Nov.</p></div>
+    </div>`,
 
     explore: () => `${status()}${topbar('Explore')}<div class="content tight">
       <div class="search"><i></i>Search instruments</div>
@@ -361,6 +385,7 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     if (a==='instrument'){ push('instrument'); return; }
     if (a==='position'){ push('position'); return; }
     if (a==='deposit'){ push('deposit'); return; }
+    if (a==='goals'){ push('goals'); return; }
     if (a.startsWith('order:')){ state.side=a.split(':')[1]; state.code=0; push('order'); return; }
     if (a==='review'){ state.code=0; push('review'); return; }
     if (a==='receipt'){ push('receipt'); return; }
