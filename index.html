@@ -128,9 +128,9 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .ctoggle.on{--tb:var(--fg);background:var(--fg);color:var(--bg)}
 .card.stats{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px;padding:20px}.stats div{display:flex;flex-direction:column;gap:4px;min-width:0}
 .stats small{color:var(--muted);font-size:12px}.stats b{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
-.hbars{display:flex;flex-direction:column;gap:14px}.hb{display:grid;grid-template-columns:64px 1fr 76px;align-items:center;gap:12px}
-.hb-l{font-size:14px}.hb-t{height:8px;border-radius:4px;background:var(--block)}.hb-t i{display:block;height:100%;border-radius:4px;background:var(--fg)}
-.hb-v{display:flex;flex-direction:column;align-items:flex-end;font-variant-numeric:tabular-nums}.hb-v b{font-size:14px;font-weight:500}.hb-v small{font-size:12px;color:var(--muted)}
+.hbars{display:flex;flex-direction:column;gap:16px}.stack{display:flex;gap:2px;height:12px;border-radius:6px;overflow:hidden}.stack i{display:block;background:var(--fg)}
+.hlegend{display:flex;flex-direction:column;gap:10px}.hlegend div{display:flex;align-items:center;gap:10px;font-size:14px;font-variant-numeric:tabular-nums}.hlegend i{width:10px;height:10px;border-radius:50%;background:var(--fg);flex:none}
+.hlegend span{flex:1}.hlegend small{color:var(--muted);font-size:13px}.hlegend b{font-weight:500;width:36px;text-align:right}
 button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 </style>
 </head>
@@ -206,8 +206,10 @@ button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
     GFNORTE: { name:'Grupo Financiero Banorte', price:158.10, chg:'+$0.94 (0.6%) today', seed:67, stats:[['Open','$157.20'],['Day range','$156.80–158.90'],['Volume','6.2M'],['Market cap','$456B'],['P/E','8.9'],['Dividend yield','6.4%'],['52-week range','$132.40–174.60'],['Exchange','BMV']], about:'One of Mexico’s largest banking groups, covering retail and corporate banking, insurance and pensions.' },
   };
   const spark = (seed,h) => chart('home'+seed, { seed, h, base:2345600, spread:0.08, fmt:money });
-  // Allocation: one row per category, bar length relative to the largest slice so the leader fills the track.
-  const hbars = items => { const top = Math.max(...items.map(it=>it[1])); return `<div class="hbars">${items.map(it=>`<div class="hb"><span class="hb-l">${it[0]}</span><span class="hb-t"><i style="width:${(it[1]/top*100).toFixed(1)}%"></i></span><span class="hb-v"><b>${it[1]}%</b><small>${it[2]}</small></span></div>`).join('')}</div>`; };
+  // Allocation: one stacked bar split by share, shaded darkest to lightest, with a legend underneath.
+  const SHADES = [1,.75,.55,.38,.22];
+  const hbars = items => `<div class="hbars"><div class="stack">${items.map((it,k)=>`<i style="flex:${it[1]};opacity:${SHADES[k]}"></i>`).join('')}</div>
+    <div class="hlegend">${items.map((it,k)=>`<div><i style="opacity:${SHADES[k]}"></i><span>${it[0]}</span><small>${it[2]}</small><b>${it[1]}%</b></div>`).join('')}</div></div>`;
   const goals = [['Travel','Moderate strategy','$21,000','$60,000',35],['Emergency fund','Conservative strategy','$48,500','$50,000',97],['New apartment','Growth strategy','$15,000','$400,000',4]];
   const goal = g => `<button class="goal" data-act="none"><span class="hd"><b>${g[0]}</b><span>${g[4]}%</span></span><span class="bar"><i style="width:${g[4]}%"></i></span><small>${g[2]} of ${g[3]} · ${g[1]}</small></button>`;
 
