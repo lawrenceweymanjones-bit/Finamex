@@ -16,11 +16,12 @@
 html,body{height:100%}
 body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);font-size:14px;-webkit-font-smoothing:antialiased;padding-block:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:14px}
 *{box-sizing:border-box}
-.stage{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center;color:var(--muted);font-size:12px;max-width:412px;width:100%}
+.stage{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center;color:var(--muted);font-size:12px;max-width:393px;width:100%}
 .stage b{color:var(--fg);font-weight:500}
 .stage .jump{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
 .stage button{font:inherit;font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
-.phone{position:relative;width:min(412px,100%);height:min(917px,calc(100vh - 110px));min-height:600px;background:var(--bg);border:1px solid var(--line);border-radius:28px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.12)}
+/* iPhone 16 / 15 Pro: 393×852 points; shrinks proportionally on short windows */
+.phone{position:relative;flex:none;height:min(852px,max(600px,calc(100vh - 110px)));aspect-ratio:393/852;max-width:100%;background:var(--bg);border:1px solid var(--line);border-radius:28px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.12)}
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);will-change:transform,opacity}
 .screen.enter-push{animation:push .3s cubic-bezier(.2,.7,.2,1)}
 .screen.enter-pop{animation:pop .3s cubic-bezier(.2,.7,.2,1)}
@@ -107,7 +108,7 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .drawer .out{padding:16px 20px 24px;color:var(--muted);font-weight:500;background:none;border:0;font:inherit;text-align:left;cursor:pointer}
 .need{background:var(--block);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}.need b{font-weight:500}.need p{margin:0;color:var(--muted);font-size:12px}
 [hidden]{display:none!important}
-.hscroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px;scroll-snap-type:x mandatory;flex:none}.hscroll::-webkit-scrollbar{display:none}
+.hscroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px;scroll-padding-inline:16px;scroll-snap-type:x mandatory;flex:none}.hscroll::-webkit-scrollbar{display:none}
 .nba{flex:none;width:260px;scroll-snap-align:start;background:var(--block);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
 .nba .tag{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}.nba h4{margin:0;font-size:15px;font-weight:500}.nba p{margin:0 0 6px;color:var(--muted);font-size:12px;line-height:1.4;flex:1}.nba .btn{padding:10px 16px;font-size:13px}
 .goalcard{border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;background:none;font:inherit;color:var(--fg);text-align:left;cursor:pointer;width:100%}
