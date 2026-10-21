@@ -120,8 +120,11 @@ body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--font);f
 .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}.split .card{background:none;font:inherit;color:var(--fg);text-align:left;cursor:pointer;gap:6px}
 .split small{color:var(--muted);font-size:12px}.split b{font-size:18px;font-weight:500;font-variant-numeric:tabular-nums}.split em{font-style:normal;color:var(--muted);font-size:12px}
 .split-bar{height:4px;border-radius:2px;background:var(--block2);overflow:hidden}.split-bar i{display:block;height:100%;background:var(--fg)}
-/* Home: modules breathe; contents of a module stay tight */
+/* Modules breathe (32px apart); a title sits 12px above its module */
 .content.home{gap:32px}.mod{display:flex;flex-direction:column;gap:12px}
+.content > .sect:not(:first-child),.content > .label:not(:first-child){margin-top:16px}
+.content > .sect,.content > .label{margin-bottom:-4px}
+:is(.sect,.label) + .list > :is(.row,.goal):first-child{padding-top:4px}
 button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 </style>
 </head>
