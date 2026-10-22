@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Finamex 360 v2 prototype</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--stage:#eceef1;--bg:#fff;--ink:#1a1a1a;--grey:#7a7a7a;--line:#d9d9d9;--soft:#eeeeee;--mid:#dedede;--font:"DM Sans",system-ui,-apple-system,sans-serif}
+html{height:100%}body{min-height:100%;margin:0;background:var(--stage);color:var(--ink);font-family:var(--font);font-weight:400;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:12px}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;font-size:12px;color:#8a93a3}
+.toolbar b{font-weight:500}.toolbar button{font:inherit;font-size:12px;border:1px solid #8a93a3;background:transparent;color:#6b7686;border-radius:999px;padding:4px 10px;cursor:pointer}
+.phone{width:393px;max-width:100%;height:852px;flex:none;background:var(--bg);border-radius:28px;box-shadow:0 20px 60px rgba(0,0,0,.22);overflow:hidden;position:relative;display:flex;flex-direction:column}
+.status{display:flex;justify-content:space-between;padding:13px 24px 6px;font-size:14px;font-weight:500}
+section{display:none;flex:1;flex-direction:column;min-height:0}section.on{display:flex}
+.top{display:flex;align-items:center;gap:12px;padding:6px 16px 6px 12px}
+.top button{background:none;border:0;font:inherit;font-size:22px;color:var(--ink);cursor:pointer;padding:0 8px}
+.top .exit{font-size:14px;font-weight:500;color:var(--grey);margin-left:auto}
+.prog{flex:1;display:flex;gap:4px}.prog i{flex:1;height:3px;border-radius:2px;background:var(--mid)}.prog i.on{background:var(--ink)}
+.chapter{padding:4px 16px 0;font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--grey);text-transform:uppercase}
+.body{flex:1;overflow:auto;padding:8px 16px 12px;display:flex;flex-direction:column;gap:20px}
+h1{font-size:24px;font-weight:500;margin:0;line-height:1.2;text-wrap:balance}
+.sub{font-size:14px;color:var(--grey);margin:0;line-height:1.45}
+.foot{padding:12px 16px 30px;display:flex;flex-direction:column;gap:10px;align-items:center}
+.btn{width:100%;font:inherit;font-weight:500;font-size:15px;padding:16px;border:0;border-radius:999px;background:var(--ink);color:#fff;cursor:pointer}
+.btn.sec{background:#fff;color:var(--ink);border:1px solid var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.link{background:none;border:0;font:inherit;font-size:13px;color:var(--grey);cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:13px;font-weight:500;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.opt{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#fff;font:inherit;text-align:left;cursor:pointer;width:100%}
+.opt.on{border:1.5px solid var(--ink)}
+.opt .r{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);flex:none}.opt.on .r{background:var(--ink);border-color:var(--ink)}
+.opt b{display:block;font-weight:500;font-size:15px}.opt span{font-size:13px;color:var(--grey)}
+.sel{font:inherit;font-weight:500;font-size:15px;padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);cursor:pointer;text-align:left;width:100%}
+.sel.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.picker{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#fff;font:inherit;text-align:left;cursor:pointer;width:100%}
+.picker small{display:block;font-size:12px;color:var(--grey)}.picker b{font-size:16px;font-weight:500}
+.card{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.soft{background:var(--soft);border:0}
+.eyebrow{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
+.hint{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--grey)}.hint:before{content:"";width:10px;height:10px;border-radius:50%;background:var(--ink);flex:none;margin-top:4px}
+/* sliders */
+.dial{display:flex;flex-direction:column;gap:8px}.dial .h{display:flex;justify-content:space-between;align-items:baseline;gap:12px}.dial .h label{font-size:14px;color:var(--grey)}.dial .h b{font-size:16px;font-weight:500;white-space:nowrap}
+.seg{position:relative;height:28px}
+.seg input{position:absolute;inset:0;width:100%;height:28px;margin:0;opacity:0;cursor:pointer;z-index:2}
+.seg .track{position:absolute;left:14px;right:14px;top:12px;height:4px;background:var(--mid);border-radius:2px}
+.seg .fillb{position:absolute;left:14px;top:12px;height:4px;background:var(--ink);border-radius:2px}
+.seg .ticks{position:absolute;left:14px;right:14px;top:9px;display:flex;justify-content:space-between}.seg .ticks i{width:10px;height:10px;border-radius:50%;background:var(--mid)}.seg .ticks i.on{background:var(--ink)}
+.seg .knob{position:absolute;top:0;width:28px;height:28px;border-radius:50%;background:var(--ink);border:3px solid #fff;box-sizing:border-box;transform:translateX(-14px);z-index:1}
+.labs{display:flex;justify-content:space-between;font-size:11px;color:var(--grey)}.labs span{flex:1;text-align:center}.labs span:first-child{text-align:left}.labs span:last-child{text-align:right}.labs span.on{color:var(--ink);font-weight:500}
+/* goal deck */
+.deck{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 16px;margin:0 -16px;scrollbar-width:none}.deck::-webkit-scrollbar{display:none}
+.gcard{flex:none;width:300px;scroll-snap-align:center;border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px;box-sizing:border-box}
+.gcard.on{border:1.5px solid var(--ink)}.gcard .art{height:140px;border-radius:12px;background:var(--soft)}
+.gcard .t{display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:500}.gcard .t i{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line)}.gcard.on .t i{background:var(--ink);border-color:var(--ink);position:relative}.gcard.on .t i:after{content:"";position:absolute;left:8px;top:4px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.gcard p{margin:0;font-size:14px;color:var(--grey)}.gcard .tag{align-self:flex-start;font-size:11px;font-weight:500;background:var(--soft);border-radius:999px;padding:5px 10px}
+.dots{display:flex;gap:6px;justify-content:center}.dots i{width:7px;height:7px;border-radius:50%;background:var(--mid)}.dots i.on{background:var(--ink)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tile{display:flex;align-items:center;gap:10px;padding:16px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;font:inherit;font-size:14px;font-weight:500;text-align:left;cursor:pointer}.tile i{width:18px;height:18px;border-radius:4px;background:var(--soft);flex:none}.tile.on{border:1.5px solid var(--ink)}.tile.on i{background:var(--ink)}
+.toggle{display:flex}.toggle .chip{border-radius:999px}
+/* result */
+.gauge{display:flex;gap:3px}.gauge i{width:22px;height:8px;border-radius:4px;background:var(--mid)}.gauge i.on{background:var(--ink)}
+.stats{display:flex;gap:8px}.stats div{flex:1;background:var(--soft);border-radius:8px;padding:8px 10px}.stats b{display:block;font-size:15px;font-weight:500}.stats small{font-size:10px;color:var(--grey)}
+svg.bars{width:100%;height:150px;display:block}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--grey)}.legend span:before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:6px;background:var(--mid)}.legend span.e:before{background:var(--ink)}
+.kv{display:flex;flex-direction:column}.kv div{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}.kv div:last-child{border:0}.kv span{color:var(--grey)}.kv b{font-weight:500;text-align:right}
+.srcs{display:flex;gap:8px}.srcs .opt{padding:10px 12px}.srcs .opt .r{width:16px;height:16px}
+.check{display:flex;gap:12px;align-items:flex-start;cursor:pointer;font-size:14px;font-weight:500}.check input{appearance:none;width:22px;height:22px;border-radius:6px;background:var(--soft);flex:none;margin:0;position:relative}.check input:checked{background:var(--ink)}.check input:checked:after{content:"";position:absolute;left:8px;top:4px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.sigpad{width:100%;height:96px;border-radius:12px;background:var(--soft);touch-action:none;display:block}
+.sheet{position:absolute;inset:0;background:rgba(26,26,26,.4);display:none;align-items:flex-end;z-index:5}.sheet.on{display:flex}
+.sheet .pane{width:100%;background:#fff;border-radius:20px 20px 0 0;padding:12px 16px 34px;box-sizing:border-box}.sheet .grab{width:36px;height:4px;border-radius:2px;background:var(--mid);margin:0 auto 10px}.sheet h3{margin:0 0 6px;font-size:18px;font-weight:500}
+.sheet .row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);font-size:15px;cursor:pointer;background:none;border-left:0;border-right:0;border-top:0;width:100%;font-family:inherit;text-align:left}.sheet .row:last-child{border-bottom:0}.sheet .row i{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line)}.sheet .row.on{font-weight:500}.sheet .row.on i{background:var(--ink);border-color:var(--ink)}
+.done-ring{width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--ink) 0 70%,var(--mid) 70% 100%);margin:0 auto;position:relative}.done-ring:after{content:"";position:absolute;inset:14px;border-radius:50%;background:#fff}
+.steps{display:flex;flex-direction:column;gap:14px}.steps div{display:flex;gap:14px}.steps b{display:block;font-weight:500;font-size:15px}.steps span{font-size:13px;color:var(--grey);line-height:1.4}.steps div:before{content:"";width:10px;height:10px;border-radius:50%;background:var(--ink);flex:none;margin-top:6px}
+input.txt{font:inherit;font-size:15px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;width:100%;box-sizing:border-box;outline:none}
+.mix{display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--grey)}.mix div{display:flex;align-items:center;gap:10px}.mix label{width:120px}.mix .b{flex:1;display:flex;gap:3px}.mix .b i{height:10px;border-radius:5px;background:var(--mid)}.mix .b i:first-child{background:var(--ink)}
+.ben{display:flex;gap:14px}.ben:before{content:"";width:40px;height:40px;border-radius:50%;background:var(--soft);flex:none}.ben b{display:block;font-size:16px;font-weight:500}.ben span{font-size:14px;color:var(--grey);line-height:1.4}
+.strip{display:flex;gap:6px}.strip span{flex:1;display:flex;align-items:center;gap:8px;background:var(--soft);border-radius:999px;padding:8px 12px 8px 10px;font-size:12px;font-weight:500}.strip span:before{content:"";width:18px;height:18px;border-radius:50%;background:var(--ink)}
+</style>
+</head>
+<body>
+<div class="toolbar"><b>Finamex 360 — guided profiling (v2)</b> <span id="counter"></span> <button id="restart">Restart</button></div>
+<div class="phone">
+<div class="status"><span>9:41</span><span>●●●</span></div>
+
+<section data-id="welcome">
+ <div class="top"><span></span><button class="exit" data-go="welcome" style="font-size:14px">Close</button></div>
+ <div class="body" style="gap:24px">
+  <div><h1>Investing, done for you</h1><p class="sub">Think of it as a savings pot that grows. We handle the hard parts.</p></div>
+  <div class="mix"><div><label>Your mix today</label><div class="b"><i style="flex:60"></i><i style="flex:40"></i></div></div><div><label>After markets move</label><div class="b"><i style="flex:72"></i><i style="flex:28"></i></div></div><div><label style="color:var(--ink);font-weight:500">We nudge it back</label><div class="b"><i style="flex:60"></i><i style="flex:40"></i></div></div></div>
+  <div class="ben"><div><b>We pick the mix</b><span>A blend of funds matched to you, instead of a single bet on one thing.</span></div></div>
+  <div class="ben"><div><b>We keep it balanced</b><span>When markets pull it off course, we quietly nudge it back. You never have to watch.</span></div></div>
+  <div class="ben"><div><b>Your money stays yours</b><span>Add more or take it out whenever you like. No lock-in.</span></div></div>
+  <div class="strip"><span>Your goal</span><span>About you</span><span>Your money</span></div>
+  <p class="sub" style="font-size:12px">About 5 minutes. Nothing is final until you sign.</p>
+ </div>
+ <div class="foot"><button class="btn" data-go="goal">Let’s go</button><button class="link">What’s a portfolio?</button></div>
+</section>
+
+<section data-id="goal" data-step="1" data-chapter="Your goal · 1 of 2">
+ <div class="body" style="gap:16px">
+  <div><h1>What’s your goal?</h1><p class="sub">Swipe through the deck. The one in the middle is your pick, or add your own.</p></div>
+  <div class="deck" id="deck"></div>
+  <div class="dots" id="deckDots"></div>
+  <button class="btn sec" id="ownGoal">+ Add my own goal</button>
+  <div id="ownWrap" hidden><input class="txt" id="ownName" placeholder="Name your goal"></div>
+ </div>
+ <div class="foot"><button class="btn" id="goalNext">Continue with A home</button></div>
+</section>
+
+<section data-id="size" data-step="2" data-chapter="Your goal · 2 of 2">
+ <div class="body" style="gap:18px">
+  <div><h1 id="sizeTitle">A home. Let’s size it.</h1><p class="sub">Three sliders. We work out the monthly amount for you.</p></div>
+  <div id="dialTarget"></div><div id="dialWhen"></div><div id="dialStart"></div>
+  <p class="sub" style="font-size:12px">You have $65,797 in cash.</p>
+  <div class="card soft" id="monthlyCard"><div class="eyebrow">You’d put in about</div><div style="font-size:34px;font-weight:500" id="monthlyBig">$4,300 a month</div><p class="sub" style="font-size:13px">Based on how a middle-of-the-road mix has done since it started. Past results aren’t a promise, and your own mix may change this.</p><div style="font-size:12px"><span style="color:var(--grey)">If it didn’t grow at all:</span> <b id="monthlyFloor">$4,800 a month</b></div></div>
+ </div>
+ <div class="foot"><button class="btn" data-go="about">Continue</button></div>
+</section>
+
+<section data-id="about" data-step="3" data-chapter="About you · 1 of 2">
+ <div class="body" style="gap:12px">
+  <div><h1>A quick bit about you</h1><p class="sub">Three quick picks. We ask because the rules say we must.</p></div>
+  <button class="picker" data-pick="education"><div><small>Highest level of study</small><b id="v_education">Degree or technical</b></div><span>›</span></button>
+  <button class="picker" data-pick="occupation"><div><small>What do you do?</small><b id="v_occupation">Employed</b></div><span>›</span></button>
+  <div style="display:flex;flex-direction:column;gap:8px;padding-top:6px"><b style="font-weight:500;font-size:15px">Ever worked in finance?</b><div class="stack" data-single="work"><button class="sel on">No</button><button class="sel">Yes, but not in investments</button><button class="sel">Yes, in investments for a year or more</button></div></div>
+  <p class="sub" style="font-size:13px;padding-top:4px">This doesn’t limit what you can do. It just changes how much we explain along the way.</p>
+ </div>
+ <div class="foot"><button class="btn" data-go="exp">Continue</button></div>
+</section>
+
+<section data-id="exp" data-step="4" data-chapter="About you · 2 of 2">
+ <div class="body">
+  <div><h1>Have you invested before?</h1><p class="sub">Tap anything you’ve bought or sold at least twice in the last 2 years. Nothing wrong with “none”.</p></div>
+  <div class="chips" data-multi="instruments"><button class="chip">None</button><button class="chip">Shares</button><button class="chip on">Bonds</button><button class="chip">Funds</button><button class="chip">ETFs</button><button class="chip on">Cetes</button><button class="chip">CKDs / Fibras</button><button class="chip">International (SIC)</button><button class="chip">Structured</button><button class="chip">Asset-backed</button></div>
+  <div style="display:flex;flex-direction:column;gap:10px"><b style="font-weight:500;font-size:15px">Which of these have you used?</b><div class="chips" data-multi="services"><button class="chip">Nothing yet</button><button class="chip on">Placed my own orders</button><button class="chip">Had advice</button><button class="chip">Had it managed for me</button></div></div>
+  <div class="card soft"><p class="sub" style="font-size:13px;color:var(--ink)">This doesn’t limit what you can do. It just changes how much we explain along the way.</p></div>
+ </div>
+ <div class="foot"><button class="btn" data-go="source">Continue</button></div>
+</section>
+
+<section data-id="source" data-step="5" data-chapter="Your money · 1 of 2">
+ <div class="body">
+  <div><h1>Where does this money come from?</h1><p class="sub">Pick all that apply.</p></div>
+  <div class="tiles" data-multi="source"><button class="tile on"><i></i>My work</button><button class="tile on"><i></i>Sold property or goods</button><button class="tile"><i></i>Inheritance</button><button class="tile"><i></i>Other investments</button><button class="tile"><i></i>Pension or payout</button><button class="tile"><i></i>Family / I don’t earn</button></div>
+ </div>
+ <div class="foot"><button class="btn" data-go="slice">Continue</button></div>
+</section>
+
+<section data-id="slice" data-step="6" data-chapter="Your money · 2 of 2">
+ <div class="body" style="gap:22px">
+  <div><h1>About your money</h1><p class="sub">Rough answers are fine.</p></div>
+  <div id="dialWealth"></div><div id="dialIncome"></div>
+  <div class="dial"><div class="h"><label style="color:var(--ink);font-weight:500;font-size:15px">Investments at other financial institutions?</label><div class="toggle" data-single="elsewhere"><button class="chip">No</button><button class="chip on">Yes</button></div></div></div>
+  <div id="dialElse"></div>
+ </div>
+ <div class="foot"><button class="btn" data-go="dip">Continue</button></div>
+</section>
+
+<section data-id="dip" data-step="7" data-chapter="How you’d react · last one">
+ <div class="body" style="gap:16px">
+  <div><h1>Markets have a bad month. What do you do?</h1><p class="sub" id="dipSub">Imagine your home fund is worth 15% less for a while.</p></div>
+  <svg viewBox="0 0 361 90" style="width:100%;height:90px"><polyline points="0,55 40,48 80,52 120,38 160,42 200,22 230,28 260,78 290,72 320,48 361,40" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/><circle cx="260" cy="78" r="5" fill="#1a1a1a"/></svg>
+  <div style="display:flex;flex-direction:column;gap:8px" data-single="scenario">
+   <button class="opt"><i class="r"></i><div><b>Take it out</b><span>I’d rather earn less than watch it fall.</span></div></button>
+   <button class="opt on"><i class="r"></i><div><b>Wait it out</b><span>A small dip is fine. It usually comes back.</span></div></button>
+   <button class="opt"><i class="r"></i><div><b>Sit through a long one</b><span>I can handle a year or two down.</span></div></button>
+   <button class="opt"><i class="r"></i><div><b>Put more in</b><span>Whatever it takes for the best return.</span></div></button>
+  </div>
+  <p class="sub" style="font-size:13px">No wrong answer. It’s about how you’d feel, not what’s clever.</p>
+ </div>
+ <div class="foot"><button class="btn" id="seeResult">See my result</button></div>
+</section>
+
+<section data-id="result">
+ <div class="top"><button data-go="dip">←</button><span class="exit">Save & exit</span></div>
+ <div class="body" style="gap:10px;padding-top:0">
+  <div><div class="eyebrow">Your result</div><h1 id="resTitle">Patrimonial suits you</h1><p class="sub">Steadier options are a tap away.</p></div>
+  <div class="chips" id="resPills"></div>
+  <div class="card" style="border:1.5px solid var(--ink);gap:10px;padding:14px 16px">
+   <div style="display:flex;justify-content:space-between;align-items:center"><div><div class="sub" style="font-size:12px">Grown since it started</div><div style="font-size:28px;font-weight:500" id="rTrack">+9.65%</div></div><div style="text-align:right"><div class="sub" style="font-size:12px" id="rBump">Bumpiness · Medium</div><div class="gauge" id="rGauge" style="justify-content:flex-end;margin-top:6px"></div></div></div>
+   <div class="stats"><div><b id="rBest">+14%</b><small>best year</small></div><div><b id="rWorst">−5.9%</b><small>worst dip</small></div><div><b id="rMix">70 / 30</b><small>shares / bonds</small></div></div>
+   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b style="font-weight:500;font-size:13px" id="rMonthly">For your home: about $4,100 a month</b><span style="font-size:12px;color:var(--grey);white-space:nowrap">What’s inside ›</span></div>
+  </div>
+  <p class="sub" style="font-size:12px" id="chartSub">$10,000 to start plus $500 a month, if you’d started when this portfolio did.</p>
+  <svg class="bars" viewBox="0 0 361 150" id="bars"></svg>
+  <div class="legend"><span>What you put in</span><span class="e">What it earned</span></div>
+ </div>
+ <div class="foot"><button class="btn" id="goWith">Go with Patrimonial</button><button class="link" data-go="goal">Change my answers</button></div>
+</section>
+
+<section data-id="sign">
+ <div class="top"><button data-go="result">←</button><span class="exit">Save & exit</span></div>
+ <div class="body" style="gap:16px">
+  <div><h1>Check and sign</h1><p class="sub">Pick where the money comes from, sign, and it’s live.</p></div>
+  <div class="card" style="padding:4px 16px"><div class="kv" id="summary"></div></div>
+  <div style="display:flex;flex-direction:column;gap:8px"><b style="font-weight:500;font-size:14px" id="srcTitle">Where the $21,000 comes from</b><div class="srcs" data-single="fundsource"><button class="opt on"><i class="r"></i><div><b style="font-size:13px">My cash</b><span style="font-size:11px">Goes in today</span></div></button><button class="opt"><i class="r"></i><div><b style="font-size:13px">New deposit</b><span style="font-size:11px">We’ll show you where</span></div></button></div></div>
+  <div class="card"><label class="check"><input type="checkbox" id="agree"><div>I agree to the Framework of Action, the Addendum and the Annexes<div style="font-size:12px;color:var(--ink);font-weight:500;margin-top:4px">Read them (about 4 min) ›</div></div></label></div>
+  <div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between;font-size:13px"><b style="font-weight:500">Sign here · Mónica Barroso Rueda</b><button class="link" id="clearSig" style="font-size:12px">Clear</button></div><canvas class="sigpad" id="sig" width="361" height="96"></canvas><p class="sub" style="font-size:11px">Your drawn signature stands in for a pen-and-paper one.</p></div>
+ </div>
+ <div class="foot"><button class="btn" id="signBtn" disabled>Sign and start</button></div>
+</section>
+
+<section data-id="done">
+ <div class="body" style="gap:24px;padding-top:40px">
+  <div class="done-ring"></div>
+  <div style="text-align:center"><h1 id="doneTitle">A home is live</h1><p class="sub" id="doneSub" style="margin-top:8px">$21,000 from your cash is going into a Patrimonial mix now. First $4,100 top-up on 1 Dec.</p></div>
+  <div class="eyebrow">What happens next</div>
+  <div class="steps"><div><div><b>Today</b><span>We buy the funds in your mix. Nothing for you to do.</span></div></div><div><div><b>When markets drift</b><span id="doneMix">We nudge the mix back to 70 / 30 and send you a note.</span></div></div><div><div><b>Every 2 years</b><span>The rules ask us to re-check your answers. We’ll remind you.</span></div></div><div><div><b>Any time</b><span>Add money, take it out, or change your answers from your goal.</span></div></div></div>
+ </div>
+ <div class="foot"><button class="btn" data-go="welcome">See my goal</button></div>
+</section>
+
+<div class="sheet" id="sheet"><div class="pane"><div class="grab"></div><h3 id="sheetTitle"></h3><div id="sheetRows"></div></div></div>
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const S={goal:'A home',goalHint:'Usually 3–8 years away',target:1,when:2,start:3,education:'Degree or technical',occupation:'Employed',work:'No',instruments:['Bonds','Cetes'],services:['Placed my own orders'],source:['My work','Sold property or goods'],wealth:0,income:2,elsewhere:'Yes',elsePct:1,scenario:1,ceiling:2,chosen:2,fundsource:'My cash'};
+const money=n=>'$'+Math.round(n).toLocaleString('en-US');
+const TARGETS=[100000,250000,500000,1000000,2000000], TLAB=['$100k','$250k','$500k','$1m','$2m+'];
+const WHENS=[0.5,2,4,7,null], WLAB=['< 1 yr','1–3 yrs','3–5 yrs','5+ yrs','Open'], WTXT=['Under a year','1–3 years','3–5 years','5+ years','No set date'];
+const STARTS=[0,5000,10000,21000,50000,65797], SLAB=['$0','$5k','$10k','$25k','$50k','All'];
+const PROFILES=[{n:'Conservative',lvl:1,bump:'Low',track:'+4.2%',best:'+6%',worst:'−1.2%',mix:'20 / 80',eq:20,growth:0.04},{n:'Moderate',lvl:2,bump:'Low–medium',track:'+7.1%',best:'+9%',worst:'−3.5%',mix:'45 / 55',eq:45,growth:0.065},{n:'Patrimonial',lvl:3,bump:'Medium',track:'+9.65%',best:'+14%',worst:'−5.9%',mix:'70 / 30',eq:70,growth:0.09},{n:'Integral',lvl:4,bump:'High',track:'+13.4%',best:'+19%',worst:'−9.7%',mix:'85 / 15',eq:85,growth:0.12},{n:'Professional',lvl:5,bump:'Very high',track:'+18.9%',best:'+26%',worst:'−15%',mix:'95 / 5',eq:95,growth:0.16}];
+const GOALS=[['A home','Deposits, moving, the lot.','Usually 3–8 years away'],['A trip','Somewhere you’ve been putting off.','Usually under 2 years'],['Retirement','Future you says thanks.','10+ years'],['A safety net','For when life happens.','Keep it reachable'],['My kids','School, uni, a head start.','Usually 5–15 years'],['Just grow it','No target, no date. Just more.','Open-ended'],['Something big','A car, a wedding, a business.','Usually 1–5 years']];
+
+// ---------- nav ----------
+function go(id){$$('section').forEach(s=>s.classList.toggle('on',s.dataset.id===id));const sec=$('section.on');sec.querySelector('.body')?.scrollTo(0,0);
+ let top=sec.querySelector('.top'); if(sec.dataset.step){ if(!top){top=document.createElement('div');top.className='top';top.innerHTML='<button data-back>←</button><div class="prog">'+'<i></i>'.repeat(7)+'</div><span class="exit">Save & exit</span>';sec.prepend(top);const ch=document.createElement('div');ch.className='chapter';ch.textContent=sec.dataset.chapter;top.after(ch);}
+  const st=+sec.dataset.step; top.querySelectorAll('.prog i').forEach((i,k)=>i.classList.toggle('on',k<st)); $('#counter').textContent='Question '+st+' of 7'; } else $('#counter').textContent='';
+ if(id==='size') renderSize(); if(id==='result') renderResult(); if(id==='sign') renderSign(); if(id==='done') renderDone(); if(id==='dip') $('#dipSub').textContent='Imagine your '+S.goal.toLowerCase().replace(/^(a |my )/,'')+' fund is worth 15% less for a while.';}
+const ORDER=['welcome','goal','size','about','exp','source','slice','dip','result','sign','done'];
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go);const b=e.target.closest('[data-back]');if(b){const cur=$('section.on').dataset.id;go(ORDER[Math.max(0,ORDER.indexOf(cur)-1)]);}});
+$('#restart').addEventListener('click',()=>location.reload());
+
+// ---------- generic selectors ----------
+document.addEventListener('click',e=>{const btn=e.target.closest('button');if(!btn)return;
+ const single=btn.closest('[data-single]'); if(single){single.querySelectorAll('button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');S[single.dataset.single]=btn.textContent.trim().split('\n')[0];if(single.dataset.single==='scenario')S.scenario=[...single.children].indexOf(btn);if(single.dataset.single==='elsewhere')$('#dialElse').style.display=S.elsewhere==='Yes'?'':'none';if(single.dataset.single==='fundsource')S.fundsource=btn.querySelector('b').textContent;}
+ const multi=btn.closest('[data-multi]'); if(multi){const label=btn.textContent.trim();if(/^(None|Nothing yet)$/.test(label)){multi.querySelectorAll('button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}else{btn.classList.toggle('on');multi.querySelectorAll('button').forEach(b=>{if(/^(None|Nothing yet)$/.test(b.textContent.trim()))b.classList.remove('on');});}S[multi.dataset.multi]=[...multi.querySelectorAll('button.on')].map(b=>b.textContent.trim());}
+});
+
+// ---------- sliders ----------
+function dial(host,key,label,labels,idx,fmt,onchange){const n=labels.length;const el=document.createElement('div');el.className='dial';el.innerHTML=`<div class="h"><label>${label}</label><b></b></div><div class="seg"><div class="track"></div><div class="fillb"></div><div class="ticks">${'<i></i>'.repeat(n)}</div><div class="knob"></div><input type="range" min="0" max="${n-1}" step="1" value="${idx}" id="rng_${key}"></div><div class="labs">${labels.map(l=>`<span>${l}</span>`).join('')}</div>`;host.innerHTML='';host.appendChild(el);
+ const inp=el.querySelector('input'),knob=el.querySelector('.knob'),fb=el.querySelector('.fillb'),val=el.querySelector('b');
+ const paint=()=>{const i=+inp.value;const w=el.querySelector('.seg').clientWidth;const px=14+(w-28)*i/(n-1);knob.style.left=px+'px';fb.style.width=(px-14)+'px';el.querySelectorAll('.ticks i').forEach((t,k)=>t.classList.toggle('on',k<=i));el.querySelectorAll('.labs span').forEach((t,k)=>t.classList.toggle('on',k===i));val.textContent=fmt(i);S[key]=i;onchange&&onchange(i);};
+ inp.addEventListener('input',paint);requestAnimationFrame(paint);window.addEventListener('resize',paint);}
+
+// ---------- goal deck ----------
+const deck=$('#deck'),dots=$('#deckDots');
+GOALS.forEach(([t,d,h],i)=>{const c=document.createElement('div');c.className='gcard'+(i===0?' on':'');c.innerHTML=`<div class="art"></div><div class="t"><span>${t}</span><i></i></div><p>${d}</p><span class="tag">${h}</span>`;deck.appendChild(c);const dot=document.createElement('i');if(i===0)dot.className='on';dots.appendChild(dot);});
+function pickGoal(i){S.goal=GOALS[i][0];S.goalHint=GOALS[i][2];$$('.gcard').forEach((c,k)=>c.classList.toggle('on',k===i));[...dots.children].forEach((d,k)=>d.classList.toggle('on',k===i));$('#goalNext').textContent='Continue with '+S.goal;$('#ownWrap').hidden=true;}
+let st;deck.addEventListener('scroll',()=>{clearTimeout(st);st=setTimeout(()=>{const cards=$$('.gcard');const mid=deck.scrollLeft+deck.clientWidth/2;let best=0,bd=1e9;cards.forEach((c,i)=>{const cm=c.offsetLeft+c.offsetWidth/2;const d=Math.abs(cm-mid);if(d<bd){bd=d;best=i;}});pickGoal(best);},80);});
+$$('.gcard').forEach((c,i)=>c.addEventListener('click',()=>{c.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});pickGoal(i);}));
+$('#ownGoal').addEventListener('click',()=>{$('#ownWrap').hidden=false;$('#ownName').focus();$$('.gcard').forEach(c=>c.classList.remove('on'));});
+$('#ownName').addEventListener('input',e=>{S.goal=e.target.value||'My goal';S.goalHint='';$('#goalNext').textContent='Continue with '+S.goal;});
+$('#goalNext').addEventListener('click',()=>go('size'));
+
+// ---------- size ----------
+function monthly(growth){const t=TARGETS[S.target],yrs=WHENS[S.when],s=STARTS[S.start];if(yrs===null)return null;const m=yrs*12;if(!growth)return Math.max(0,(t-s)/m);const r=growth/12;const fv=s*Math.pow(1+r,m);const need=t-fv;if(need<=0)return 0;return need*r/(Math.pow(1+r,m)-1);}
+function renderSize(){$('#sizeTitle').textContent=S.goal+'. Let’s size it.';
+ const upd=()=>{const m=monthly(0.065),f=monthly(0);if(m===null){$('#monthlyBig').textContent='Add what you like';$('#monthlyFloor').textContent='no fixed amount';$('#monthlyCard').querySelector('.eyebrow').textContent='No set date, so';}else{$('#monthlyCard').querySelector('.eyebrow').textContent='You’d put in about';$('#monthlyBig').textContent=money(m)+' a month';$('#monthlyFloor').textContent=money(f)+' a month';}};
+ dial($('#dialTarget'),'target','Aiming for',TLAB,S.target,i=>money(TARGETS[i]),upd);dial($('#dialWhen'),'when','By when',WLAB,S.when,i=>WTXT[i],upd);dial($('#dialStart'),'start','Starting with',SLAB,S.start,i=>money(STARTS[i]),upd);}
+// slice dials
+dial($('#dialWealth'),'wealth','What percentage of your total wealth does this money represent? (Include property and other assets)',['< 25%','25–50%','50–75%','Rather not say'],0,i=>['< 25%','25–50%','50–75%','—'][i]);
+dial($('#dialIncome'),'income','What percentage of your total income does this money represent?',['I don’t save','< 10%','10–30%','> 30%'],2,i=>['None','< 10%','10–30%','> 30%'][i]);
+dial($('#dialElse'),'elsePct','Of the money you’re going to invest, what % does it represent of what you have invested there?',['< 25%','25–50%','50–75%','> 75%'],1,i=>['< 25%','25–50%','50–75%','> 75%'][i]);
+
+// ---------- pickers / sheet ----------
+const OPTS={education:['Finished secondary school','Finished high school','Degree or technical','Postgraduate'],occupation:['Employed','Self-employed / professional','Business owner','Student','Retired','Homemaker','Other']};
+const TITLES={education:'Highest level of study',occupation:'What do you do?'};
+$$('[data-pick]').forEach(p=>p.addEventListener('click',()=>{const k=p.dataset.pick;$('#sheetTitle').textContent=TITLES[k];const rows=$('#sheetRows');rows.innerHTML='';OPTS[k].forEach(o=>{const r=document.createElement('button');r.className='row'+(S[k]===o?' on':'');r.innerHTML=`<span>${o}</span><i></i>`;r.addEventListener('click',()=>{S[k]=o;$('#v_'+k).textContent=o;$('#sheet').classList.remove('on');});rows.appendChild(r);});$('#sheet').classList.add('on');}));
+$('#sheet').addEventListener('click',e=>{if(e.target===$('#sheet'))$('#sheet').classList.remove('on');});
+
+// ---------- result ----------
+$('#seeResult').addEventListener('click',()=>{let sc=S.scenario; if(S.when===0)sc-=1; if(S.when===3||S.when===4)sc+=0.5; if(S.work.startsWith('Yes, in'))sc+=0.5; if(S.instruments.includes('None'))sc-=0.5; S.ceiling=Math.max(0,Math.min(4,Math.round(sc+0.5))); S.chosen=S.ceiling; go('result');});
+function bars(svg,p){const yrs=[['Start',10000,0],['Year 1',16000,0],['Year 2',22000,0],['Now',28000,0]];let acc=0;yrs.forEach((y,i)=>{if(i===0)return;acc=(acc+y[1]-yrs[i-1][1]+ (i===1?10000:0)*0)*(1+p.growth*0.6)+ (i===1?10000*p.growth:0);y[2]=Math.round(y[1]*p.growth*i*0.55);});const maxV=36000,base=126,top=18,W=361,n=4,slot=W/n,bw=52,sc=v=>v/maxV*(base-top);let out='';[top,top+27,top+54,top+81].forEach(y=>out+=`<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="#d9d9d9"/>`);out+=`<line x1="0" x2="${W}" y1="${base}" y2="${base}" stroke="#dedede"/>`;
+ yrs.forEach(([lab,put,earn],i)=>{const x=slot*i+(slot-bw)/2,hp=sc(put),he=sc(earn);out+=`<rect x="${x}" y="${base-hp}" width="${bw}" height="${hp}" fill="#dedede" ${he?'':'rx="6"'}/>`;if(he)out+=`<path d="M${x} ${base-hp-he+6} q0 -6 6 -6 h${bw-12} q6 0 6 6 v${he-6} h-${bw} z" fill="#1a1a1a"/>`;out+=`<text x="${x+bw/2}" y="${base-hp-he-6}" font-size="11" font-weight="500" text-anchor="middle" fill="#1a1a1a">$${((put+earn)/1000).toFixed(1).replace('.0','')}k</text><text x="${x+bw/2}" y="${base+16}" font-size="11" text-anchor="middle" fill="#7a7a7a">${lab}</text>`;});
+ const cy=base-sc(30100);out+=`<line x1="${slot*3-6}" x2="${slot*4-6}" y1="${cy}" y2="${cy}" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3 4"/><text x="${slot*3-12}" y="${cy-8}" font-size="10" font-weight="500" text-anchor="end" fill="#7a7a7a">Cetes $30.1k</text>`;svg.innerHTML=out;}
+function renderResult(){const pills=$('#resPills');pills.innerHTML='';for(let i=S.ceiling;i>=0;i--){const b=document.createElement('button');b.className='chip'+(i===S.chosen?' on':'');b.textContent=PROFILES[i].n;b.addEventListener('click',()=>{S.chosen=i;renderResult();});pills.appendChild(b);}
+ const p=PROFILES[S.chosen];$('#resTitle').textContent=PROFILES[S.ceiling].n+' suits you';$('#rTrack').textContent=p.track;$('#rBump').textContent='Bumpiness · '+p.bump;$('#rGauge').innerHTML=[1,2,3,4,5].map(k=>`<i class="${k<=p.lvl?'on':''}"></i>`).join('');$('#rBest').textContent=p.best;$('#rWorst').textContent=p.worst;$('#rMix').textContent=p.mix;
+ const m=monthly(p.growth),base=monthly(0.065);$('#rMonthly').textContent=m===null?'No set date: add what you like, whenever.':`For your ${S.goal.toLowerCase().replace(/^(a |my )/,'')}: about ${money(m)} a month`+(base!==null&&Math.abs(base-m)>50?` (you planned on ${money(base)})`:'');
+ $('#goWith').textContent='Go with '+p.n;bars($('#bars'),p);}
+$('#goWith').addEventListener('click',()=>go('sign'));
+
+// ---------- sign ----------
+function renderSign(){const p=PROFILES[S.chosen],m=monthly(p.growth),yrs=WHENS[S.when];const by=yrs===null?'no set date':'by '+(new Date().getFullYear()+Math.round(yrs));
+ $('#summary').innerHTML=[['Goal',`${S.goal} · ${money(TARGETS[S.target])} ${by}`],['Starting with',money(STARTS[S.start])],['Each month',m===null?'Up to you':money(m)+' from BBVA ••4421'],['Mix',`${p.n} · ${p.mix}`],['We rebalance','Automatically, you’ll get a note']].map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join('');
+ $('#srcTitle').textContent='Where the '+money(STARTS[S.start])+' comes from';checkSign();}
+const cv=$('#sig'),cx=cv.getContext('2d');let drawing=false,drawn=false;cx.lineWidth=2;cx.lineCap='round';cx.strokeStyle='#1a1a1a';
+const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height];};
+cv.addEventListener('pointerdown',e=>{drawing=true;const[x,y]=pos(e);cx.beginPath();cx.moveTo(x,y);e.preventDefault();});cv.addEventListener('pointermove',e=>{if(!drawing)return;const[x,y]=pos(e);cx.lineTo(x,y);cx.stroke();drawn=true;checkSign();e.preventDefault();});window.addEventListener('pointerup',()=>drawing=false);
+$('#clearSig').addEventListener('click',()=>{cx.clearRect(0,0,cv.width,cv.height);drawn=false;checkSign();});
+$('#agree').addEventListener('change',checkSign);function checkSign(){$('#signBtn').disabled=!(drawn&&$('#agree').checked);}
+$('#signBtn').addEventListener('click',()=>go('done'));
+function renderDone(){const p=PROFILES[S.chosen],m=monthly(p.growth);$('#doneTitle').textContent=S.goal+' is live';$('#doneSub').textContent=`${money(STARTS[S.start])} from ${S.fundsource==='My cash'?'your cash':'your deposit'} is going into ${/^[AEIOU]/.test(p.n)?'an':'a'} ${p.n} mix now.`+(m?` First ${money(m)} top-up on 1 Dec.`:'');$('#doneMix').textContent=`We nudge the mix back to ${p.mix} and send you a note.`;}
+
+go('welcome');
+})();
+</script>
+</body>
+</html>
