@@ -83,6 +83,7 @@ input.txt{font:inherit;font-size:15px;padding:14px 16px;border:1px solid var(--l
 .ben{display:flex;gap:14px}.ben:before{content:"";width:40px;height:40px;border-radius:50%;background:var(--soft);flex:none}.ben b{display:block;font-size:16px;font-weight:500}.ben span{font-size:14px;color:var(--grey);line-height:1.4}
 .strip{display:flex;gap:6px}.strip span{flex:1;display:flex;align-items:center;gap:8px;background:var(--soft);border-radius:999px;padding:8px 12px 8px 10px;font-size:12px;font-weight:500}.strip span:before{content:"";width:18px;height:18px;border-radius:50%;background:var(--ink)}
 
+/* phone: drop the stage and frame, fill the screen */
 @media (max-width:600px),(display-mode:standalone){
  html,body{height:100%;overflow:hidden}
  body{padding:0;background:var(--bg);gap:0}
@@ -101,15 +102,25 @@ input.txt{font:inherit;font-size:15px;padding:14px 16px;border:1px solid var(--l
 <div class="phone">
 <div class="status"><span>9:41</span><span>●●●</span></div>
 
+<section data-id="home">
+ <div class="body" style="gap:18px;padding-top:6px">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0"><div style="display:flex;gap:14px;align-items:center;font-size:16px;font-weight:500"><span style="font-size:18px">☰</span>Finamex</div><i style="width:20px;height:20px;border-radius:50%;border:1.5px solid var(--ink)"></i></div>
+  <div><div class="sub" style="font-size:13px">Total value</div><div style="font-size:34px;font-weight:500;line-height:1.2">$2,345,600</div><div class="sub" style="font-size:13px">+$12,400 (0.5%) today</div></div>
+  <div style="display:flex;gap:8px"><div style="flex:1;background:var(--soft);border-radius:12px;padding:14px 0;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:500"><i style="width:28px;height:28px;border-radius:50%;background:var(--ink)"></i>Deposit</div><div style="flex:1;background:var(--soft);border-radius:12px;padding:14px 0;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:500"><i style="width:28px;height:28px;border-radius:50%;background:var(--ink)"></i>Withdraw</div><div style="flex:1;background:var(--soft);border-radius:12px;padding:14px 0;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:500"><i style="width:28px;height:28px;border-radius:50%;background:var(--ink)"></i>Invest</div></div>
+  <div class="eyebrow">For you</div>
+  <div class="card soft" style="padding:20px 16px;gap:12px"><div style="font-size:22px;font-weight:500;line-height:1.25">Investing done for you</div><p class="sub">We build an investment pot based upon your goals and optimise it as it matures.</p><div><button class="btn" data-go="welcome" style="width:auto;padding:12px 20px;font-size:14px">Get started</button></div></div>
+  <div class="card" style="gap:4px"><div class="eyebrow">Maturing soon</div><div style="font-size:15px;font-weight:500">Your Cetes 28d mature 24 Nov</div><p class="sub" style="font-size:13px">$120,000 rolls into a new 28-day Cetes.</p></div>
+ </div>
+ <div style="display:flex;justify-content:space-around;border-top:1px solid var(--line);padding:10px 0 calc(16px + env(safe-area-inset-bottom,0px));font-size:10px;color:var(--grey)"><div style="display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--ink);font-weight:500"><i style="width:22px;height:22px;border-radius:6px;background:var(--ink)"></i>Home</div><div style="display:flex;flex-direction:column;align-items:center;gap:6px;"><i style="width:22px;height:22px;border-radius:6px;background:var(--mid)"></i>Portfolio</div><div style="display:flex;flex-direction:column;align-items:center;gap:6px;"><i style="width:22px;height:22px;border-radius:6px;background:var(--mid)"></i>Explore</div><div style="display:flex;flex-direction:column;align-items:center;gap:6px;"><i style="width:22px;height:22px;border-radius:6px;background:var(--mid)"></i>Activity</div></div>
+</section>
+
 <section data-id="welcome">
- <div class="top"><span></span><button class="exit" data-go="welcome" style="font-size:14px">Close</button></div>
+ <div class="top"><span></span><button class="exit" data-go="home" style="font-size:14px">Close</button></div>
  <div class="body" style="gap:24px">
   <div><h1>Investing, done for you</h1><p class="sub">Think of it as a savings pot that grows. We handle the hard parts.</p></div>
-  <div class="mix"><div><label>Your mix today</label><div class="b"><i style="flex:60"></i><i style="flex:40"></i></div></div><div><label>After markets move</label><div class="b"><i style="flex:72"></i><i style="flex:28"></i></div></div><div><label style="color:var(--ink);font-weight:500">We nudge it back</label><div class="b"><i style="flex:60"></i><i style="flex:40"></i></div></div></div>
-  <div class="ben"><div><b>We pick the mix</b><span>A blend of funds matched to you, instead of a single bet on one thing.</span></div></div>
+    <div class="ben"><div><b>We pick the mix</b><span>A blend of funds matched to you, instead of a single bet on one thing.</span></div></div>
   <div class="ben"><div><b>We keep it balanced</b><span>When markets pull it off course, we quietly nudge it back. You never have to watch.</span></div></div>
   <div class="ben"><div><b>Your money stays yours</b><span>Add more or take it out whenever you like. No lock-in.</span></div></div>
-  <div class="strip"><span>Your goal</span><span>About you</span><span>Your money</span></div>
   <p class="sub" style="font-size:12px">About 5 minutes. Nothing is final until you sign.</p>
  </div>
  <div class="foot"><button class="btn" data-go="goal">Let’s go</button><button class="link">What’s a portfolio?</button></div>
@@ -226,7 +237,7 @@ input.txt{font:inherit;font-size:15px;padding:14px 16px;border:1px solid var(--l
   <div class="eyebrow">What happens next</div>
   <div class="steps"><div><div><b>Today</b><span>We buy the funds in your mix. Nothing for you to do.</span></div></div><div><div><b>When markets drift</b><span id="doneMix">We nudge the mix back to 70 / 30 and send you a note.</span></div></div><div><div><b>Every 2 years</b><span>The rules ask us to re-check your answers. We’ll remind you.</span></div></div><div><div><b>Any time</b><span>Add money, take it out, or change your answers from your goal.</span></div></div></div>
  </div>
- <div class="foot"><button class="btn" data-go="welcome">See my goal</button></div>
+ <div class="foot"><button class="btn" data-go="home">See my goal</button></div>
 </section>
 
 <div class="sheet" id="sheet"><div class="pane"><div class="grab"></div><h3 id="sheetTitle"></h3><div id="sheetRows"></div></div></div>
@@ -248,7 +259,7 @@ function go(id){$$('section').forEach(s=>s.classList.toggle('on',s.dataset.id===
  let top=sec.querySelector('.top'); if(sec.dataset.step){ if(!top){top=document.createElement('div');top.className='top';top.innerHTML='<button data-back>←</button><div class="prog">'+'<i></i>'.repeat(7)+'</div><span class="exit">Save & exit</span>';sec.prepend(top);const ch=document.createElement('div');ch.className='chapter';ch.textContent=sec.dataset.chapter;top.after(ch);}
   const st=+sec.dataset.step; top.querySelectorAll('.prog i').forEach((i,k)=>i.classList.toggle('on',k<st)); $('#counter').textContent='Question '+st+' of 7'; } else $('#counter').textContent='';
  if(id==='size') renderSize(); if(id==='result') renderResult(); if(id==='sign') renderSign(); if(id==='done') renderDone(); if(id==='dip') $('#dipSub').textContent='Imagine your '+S.goal.toLowerCase().replace(/^(a |my )/,'')+' fund is worth 15% less for a while.';}
-const ORDER=['welcome','goal','size','about','exp','source','slice','dip','result','sign','done'];
+const ORDER=['home','welcome','goal','size','about','exp','source','slice','dip','result','sign','done'];
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go);const b=e.target.closest('[data-back]');if(b){const cur=$('section.on').dataset.id;go(ORDER[Math.max(0,ORDER.indexOf(cur)-1)]);}});
 $('#restart').addEventListener('click',()=>location.reload());
 
@@ -313,7 +324,7 @@ $('#agree').addEventListener('change',checkSign);function checkSign(){$('#signBt
 $('#signBtn').addEventListener('click',()=>go('done'));
 function renderDone(){const p=PROFILES[S.chosen],m=monthly(p.growth);$('#doneTitle').textContent=S.goal+' is live';$('#doneSub').textContent=`${money(STARTS[S.start])} from ${S.fundsource==='My cash'?'your cash':'your deposit'} is going into ${/^[AEIOU]/.test(p.n)?'an':'a'} ${p.n} mix now.`+(m?` First ${money(m)} top-up on 1 Dec.`:'');$('#doneMix').textContent=`We nudge the mix back to ${p.mix} and send you a note.`;}
 
-go('welcome');
+go('home');
 })();
 </script>
 </body>
