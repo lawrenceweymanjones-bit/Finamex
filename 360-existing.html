@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Finamex 360 Profiler (existing)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap">
+<style>
+/* Layout: a single phone frame centred on a neutral stage; every Finamex screen is one <section> swapped by script. */
+:root{
+  --stage:#eef0f3; --bg:#ffffff; --fg:#1f2a3a; --muted:#6b7686; --line:#d7dce3; --soft:#f3f5f8;
+  --navy:#17243d; --navy2:#2a3b5c; --blue:#1947a8; --accent:#3d8bd9; --devnote:#c8302b;
+  --font:"Lexend",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --stage:#0f141c; --bg:#ffffff; --fg:#1f2a3a; --muted:#6b7686; --line:#d7dce3; --soft:#f3f5f8; color-scheme:dark } }
+:root[data-theme="dark"]{ --stage:#0f141c; --bg:#ffffff; --fg:#1f2a3a; --muted:#6b7686; --line:#d7dce3; --soft:#f3f5f8; color-scheme:dark }
+html,body{height:100%}
+body{margin:0;background:var(--stage);color:var(--fg);font-family:var(--font);font-weight:300;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;font-size:12px;color:#8a93a3}
+.toolbar b{font-weight:500;color:#aab3c2}
+.toolbar button{font:inherit;font-size:12px;border:1px solid #8a93a3;background:transparent;color:#aab3c2;border-radius:999px;padding:4px 10px;cursor:pointer}
+.phone{width:min(393px,100%);height:min(852px,calc(100% - 60px));min-height:600px;background:var(--bg);border-radius:28px;box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden;position:relative;display:flex;flex-direction:column}
+.status{display:flex;justify-content:space-between;padding:12px 24px 6px;font-size:13px;font-weight:500}
+section{display:none;flex:1;flex-direction:column;min-height:0}
+section.on{display:flex}
+.brand{background:linear-gradient(90deg,var(--navy),var(--navy2));color:#fff;text-align:center;padding:10px;font-weight:600;letter-spacing:.18em;font-size:13px}
+.brand small{display:block;width:40px;height:2px;background:#fff;margin:6px auto 0}
+.nav{display:flex;justify-content:space-between;padding:10px 16px 0;font-size:20px}
+.nav button{background:none;border:0;font:inherit;font-size:20px;color:var(--navy);cursor:pointer;padding:0 4px}
+.body{flex:1;overflow:auto;padding:8px 24px 16px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.illo{width:200px;height:120px;border-radius:8px;background:linear-gradient(135deg,#dfe7f3,#f3f6fb);display:flex;align-items:center;justify-content:center;color:#9aa8bd;font-size:11px;flex:none}
+h2{font-size:17px;font-weight:400;margin:0;line-height:1.35;text-wrap:balance}
+.sub{font-size:12px;color:var(--muted);margin:0}
+.ctl{width:100%;display:flex;flex-direction:column;gap:10px}
+input.txt,button.sel{width:100%;box-sizing:border-box;font:inherit;font-weight:300;font-size:14px;padding:13px 14px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--fg);text-align:left}
+button.sel{display:flex;justify-content:space-between;cursor:pointer}
+button.sel.empty{color:var(--muted)}
+.chk{width:100%;display:flex;flex-direction:column;gap:8px;text-align:left}
+.chk label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--muted);padding:6px 0;cursor:pointer}
+.chk input{appearance:none;width:18px;height:18px;border:1px solid var(--line);border-radius:3px;background:var(--soft);flex:none;position:relative}
+.chk input:checked{border-color:var(--navy);background:#fff}
+.chk input:checked::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid var(--navy);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.dev{font-size:11px;color:var(--devnote)}
+.foot{padding:12px 24px 28px;display:flex;flex-direction:column;gap:10px;align-items:center}
+.btn{width:100%;font:inherit;font-weight:400;font-size:15px;padding:14px;border:0;border-radius:6px;background:linear-gradient(90deg,var(--navy),var(--navy2));color:#fff;cursor:pointer}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:#e6ecf7;color:var(--blue)}
+.link{background:none;border:0;font:inherit;color:var(--blue);text-decoration:underline;font-size:13px;cursor:pointer}
+.tiny{font-size:10px;color:var(--muted)}
+.sheet{position:absolute;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:5}
+.sheet.on{display:flex}
+.sheet .opts{width:100%;box-sizing:border-box;padding:12px 12px 28px;display:flex;flex-direction:column;gap:8px;background:rgba(0,0,0,0)}
+.sheet .opts button{font:inherit;font-weight:300;font-size:13px;color:var(--blue);background:#fff;border:0;border-radius:8px;padding:12px;cursor:pointer}
+/* navy header screens */
+.hdr{background:linear-gradient(180deg,var(--navy),var(--navy2));color:#fff;padding:10px 16px 20px;display:flex;flex-direction:column;gap:10px;align-items:center}
+.hdr .top{width:100%;display:flex;justify-content:space-between;font-size:13px}
+.hdr .big{font-size:24px;font-weight:500}
+.hdr .lab{font-size:12px;opacity:.9}
+.hdr .back{align-self:flex-start;background:none;border:0;color:#fff;font-size:20px;cursor:pointer;padding:0}
+.list{width:100%;display:flex;flex-direction:column;gap:8px;text-align:left}
+.prod{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:8px;padding:12px;cursor:pointer;background:#fff;font:inherit;text-align:left;width:100%}
+.prod .ic{width:26px;height:26px;border-radius:50%;background:#e6ecf7;flex:none}
+.prod b{display:block;font-weight:500;font-size:14px;color:var(--fg)}
+.prod span{font-size:11px;color:var(--muted)}
+.prod em{margin-left:auto;color:var(--blue);font-style:normal}
+.tabs{display:flex;justify-content:space-around;border-top:1px solid var(--line);padding:10px 0 24px;font-size:10px;color:var(--muted)}
+.tabs div{display:flex;flex-direction:column;align-items:center;gap:4px}
+.tabs i{width:18px;height:18px;border-radius:4px;background:var(--line)}
+/* result */
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper button{background:none;border:0;color:var(--navy);font-size:16px;cursor:pointer}
+.stepper button:disabled{opacity:.25;cursor:not-allowed}
+.stepper i{width:8px;height:8px;border-radius:50%;background:var(--line);display:block}
+.stepper i.cur{width:14px;height:14px;background:var(--navy)}
+.profile{font-size:22px;font-weight:600;margin:0}
+.bars{width:100%;display:flex;flex-direction:column;gap:8px;font-size:11px}
+.bars div{display:flex;align-items:center;gap:10px}
+.bars span:first-child{width:56px;text-align:left;color:var(--muted)}
+.bars .tr{flex:1;height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.bars .tr b{display:block;height:100%;background:var(--navy)}
+svg.chart{width:100%;height:110px}
+.agree{width:100%;text-align:left;display:flex;flex-direction:column;gap:6px;font-size:12px}
+.agree label{display:flex;gap:8px;align-items:center;cursor:pointer}
+.agree a{color:var(--blue)}
+.card{width:100%;border:1px solid var(--line);border-radius:8px;padding:12px;box-sizing:border-box;text-align:left}
+.prog{height:10px;background:var(--line);border-radius:5px;overflow:hidden}
+.prog b{display:block;height:100%;background:var(--accent)}
+.kv{width:100%;display:flex;flex-direction:column;gap:14px}
+.kv div{display:flex;flex-direction:column;gap:2px}
+.kv small{font-size:11px;color:var(--muted)}
+.kv strong{font-size:16px;font-weight:500;color:var(--blue)}
+.sig{width:100%;height:110px;border:1px solid var(--line);border-radius:4px;background:#fff;touch-action:none}
+.prose{font-size:13px;text-align:left;line-height:1.55;color:var(--fg)}
+.done{width:72px;height:72px;border-radius:50%;border:2px solid var(--navy);display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--navy)}
+@media (prefers-reduced-motion:no-preference){ section.on{animation:in .18s ease} }
+@keyframes in{from{opacity:0;transform:translateX(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+
+<div class="toolbar"><b>Finamex “Flujo 1” — existing +360 profiler, English</b> <span id="counter"></span> <button id="restart">Restart</button></div>
+<div class="phone">
+  <div class="status"><span>9:41</span><span>●●●</span></div>
+
+  <!-- HOME -->
+  <section data-id="home">
+    <div class="hdr"><div class="top"><span>☰</span><span>C100504445 ▾</span><span>👁</span></div>
+      <div style="display:flex;gap:28px;width:100%;justify-content:space-around"><div><div class="lab">My portfolio →</div><div class="big">$65,797.00</div></div><div><div class="lab">Available cash</div><div class="big">$65,797.00</div></div></div></div>
+    <div class="body" style="padding-top:16px">
+      <div class="list">
+        <button class="prod"><i class="ic"></i><div><b>+ Pesos</b><span>$10,000.00</span></div><em>→</em></button>
+        <button class="prod"><i class="ic"></i><div><b>+Cetes</b><span>Invest directly in Cetes auctions</span></div><em>→</em></button>
+        <button class="prod" data-go="reprofile"><i class="ic"></i><div><b>Roboadvisor</b><span>Digital investment adviser. Diversify and manage your money intelligently, no stress</span></div><em>→</em></button>
+        <button class="prod"><i class="ic"></i><div><b>Trading</b><span>Buy your favourite shares</span></div><em>→</em></button>
+        <button class="prod"><i class="ic"></i><div><b>FX</b><span>Trade currencies</span></div><em>→</em></button>
+        <button class="prod"><i class="ic"></i><div><b>Portfolios</b><span>Patrimonial investment</span></div><em>→</em></button>
+        <button class="prod"><i class="ic"></i><div><b>Funds</b><span>Diversify in investment funds</span></div><em>→</em></button>
+      </div>
+    </div>
+    <div class="tabs"><div><i></i>Home</div><div><i></i>Deposits</div><div><i></i>Withdrawals</div><div><i></i>Portfolio</div><div><i></i>Profile</div></div>
+  </section>
+
+  <!-- REPROFILE MODAL -->
+  <section data-id="reprofile">
+    <div class="nav"><span></span><button data-go="home">✕</button></div>
+    <div class="body" style="justify-content:center;gap:22px">
+      <div style="width:56px;height:56px;border-radius:50%;border:2px solid #e3b400;color:#e3b400;display:flex;align-items:center;justify-content:center;font-size:26px">!</div>
+      <h2 style="font-size:18px">Profiling questionnaire</h2>
+      <p class="sub" style="font-size:13px;max-width:300px">By regulation, you need to complete the questionnaire again so we can check whether your investment profile is the same or has changed.</p>
+    </div>
+    <div class="foot" style="flex-direction:row"><button class="btn ghost" data-go="home">Another time</button><button class="btn" data-go="welcome">Start</button></div>
+  </section>
+
+  <!-- WELCOME -->
+  <section data-id="welcome">
+    <div class="brand">FINAMEX<small></small></div>
+    <div class="body" style="justify-content:center;gap:18px">
+      <h2 style="font-size:28px;font-weight:500">Welcome</h2>
+      <p class="sub" style="font-size:14px">Strategy profiler</p>
+      <div class="illo" style="width:240px;height:170px">illustration</div>
+      <p class="sub" style="font-size:14px;max-width:280px">Help us build a personalised investment plan for you.</p>
+    </div>
+    <div class="foot"><button class="btn" data-go="q1">Start</button><button class="link" data-go="home">Exit</button><span class="tiny">Your answers are encrypted; your data is safe and secure.</span></div>
+  </section>
+
+  <!-- QUESTIONS are generated by script -->
+  <div id="qhost" style="display:contents"></div>
+
+  <!-- RESULT -->
+  <section data-id="result">
+    <div class="body" style="padding-top:20px;gap:12px">
+      <p class="sub" id="resIntro" style="font-size:13px;color:var(--fg);max-width:300px">This is your profile based on the answers you gave.</p>
+      <div class="stepper"><button id="stepDown">←</button><span id="dots" style="display:flex;gap:8px;align-items:center"></span><button id="stepUp">→</button></div>
+      <div><div class="sub">Profile</div><p class="profile" id="resName">Patrimonial <span style="font-size:11px;vertical-align:super;color:var(--accent)">ⓘ</span></p></div>
+      <p class="tiny">Performance since the portfolio began.* Last updated: 23 January 2026</p>
+      <svg class="chart" viewBox="0 0 345 110" id="resChart"></svg>
+      <div class="sub" style="color:var(--fg)">Target portfolio composition</div>
+      <div class="bars"><div><span>Equities</span><span class="tr"><b id="bEq" style="width:70%"></b></span><span id="tEq">70%</span></div><div><span>Bonds</span><span class="tr"><b id="bBo" style="width:30%"></b></span><span id="tBo">30%</span></div></div>
+      <div class="agree">
+        <label><input type="checkbox" class="ag"> I agree with the <a href="#" onclick="return false">General Framework of Action</a></label>
+        <label><input type="checkbox" class="ag"> I agree with the <a href="#" onclick="return false">ADDENDUM</a></label>
+        <label><input type="checkbox" class="ag"> I agree with the <a href="#" onclick="return false">Annexes</a></label>
+        <span class="dev">The user must accept all terms to continue</span>
+      </div>
+    </div>
+    <div class="foot"><button class="btn" id="acceptProfile" disabled>Accept profile</button><button class="link" data-go="q1">Start over</button><button class="link" data-go="detail" style="font-size:11px">View profile detail</button></div>
+  </section>
+
+  <!-- PROFILE DETAIL -->
+  <section data-id="detail">
+    <div class="nav"><button data-go="result">←</button><span></span></div>
+    <div class="body" style="gap:12px">
+      <div><div class="sub">Profile</div><p class="profile" id="detName">Patrimonial</p></div>
+      <p class="prose" id="detText"></p>
+    </div>
+    <div class="foot"><button class="btn" data-go="result">Understood</button></div>
+  </section>
+
+  <!-- SIGNATURE -->
+  <section data-id="sign">
+    <div class="nav"><span></span><button data-go="result">✕</button></div>
+    <div class="body" style="align-items:stretch;text-align:left;gap:10px">
+      <label class="sub" style="font-weight:500;color:var(--fg)">Full name:</label>
+      <input class="txt" id="fullName" value="MONICA GABRIELA BARROSO RUEDA" style="border-color:var(--fg)">
+      <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;font-weight:500">DRAW SIGNATURE</span><button class="link" id="clearSig">Clear</button></div>
+      <canvas class="sig" id="sig" width="345" height="110"></canvas>
+      <p class="tiny">By selecting Sign, I accept that the signature and name will be the electronic representation of my signature for all purposes when I (or my agent) use them on documents, including legally binding contracts, the same as a pen-and-paper signature or name.</p>
+    </div>
+    <div class="foot"><button class="btn" id="acceptSig" disabled>Accept signature</button></div>
+  </section>
+
+  <!-- GOALS -->
+  <section data-id="goals">
+    <div class="hdr"><div class="top"><span>☰</span><span>C100504445 ▾</span><span>🔔</span></div><button class="back" data-go="home">←</button><div class="lab">Current balance</div><div class="big" id="goalsBal">$21,000.00</div></div>
+    <div class="body" style="padding-top:16px;align-items:stretch">
+      <button class="card" data-go="goal" style="cursor:pointer;font:inherit;background:#fff"><div style="display:flex;align-items:center;gap:8px"><span class="prog" style="flex:1"><b id="gProg" style="width:42%"></b></span><span style="font-size:11px" id="gPct">42%</span></div>
+        <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:13px"><span id="gName">Trip</span><span id="gAmt">$21,000 MXN of $50,000 ▾</span></div></button>
+      <button class="btn" style="background:#fff;color:var(--blue);border:1px solid var(--blue)">+ Add goal</button>
+    </div>
+  </section>
+
+  <!-- GOAL DETAIL -->
+  <section data-id="goal">
+    <div class="hdr"><div class="top"><span>☰</span><span>C100504445 ▾</span><span>🔔</span></div><button class="back" data-go="goals">←</button><div class="lab">Current balance</div><div class="big" id="goalBal">$21,000.00</div></div>
+    <div class="body" style="padding-top:16px;gap:10px">
+      <div class="sub">Strategy</div><div style="font-size:16px;font-weight:500"><span id="goalName2">Trip</span> ✎</div>
+      <div style="width:100%;display:flex;justify-content:space-between;font-size:13px;text-align:left"><div><div class="sub">You have today</div><b id="haveNow">$21,000 MXN</b></div><div style="text-align:right"><div class="sub">Target</div><b id="target2">$50,000 MXN</b></div></div>
+      <div class="prog" style="width:100%"><b id="gProg2" style="width:42%"></b></div>
+      <p class="tiny">Performance since the portfolio began.* Last updated: 23 January 2026</p>
+      <svg class="chart" viewBox="0 0 345 110" id="goalChart"></svg>
+      <div class="card" style="padding:0"><div style="display:flex;justify-content:space-between;padding:12px;border-bottom:1px solid var(--line);font-size:13px"><span>12-month return</span><b>5.00%</b></div><div style="display:flex;justify-content:space-between;padding:12px;font-size:13px"><span>3-year return</span><b>10.00%</b></div></div>
+    </div>
+    <div class="foot"><button class="btn" data-go="invest">Invest</button></div>
+  </section>
+
+  <!-- INVEST -->
+  <section data-id="invest">
+    <div class="hdr"><div class="top"><span>☰</span><span>C100504445 ▾</span><span>🔔</span></div><button class="back" data-go="goal">←</button><div class="lab">Available cash</div><div class="big">$65,797.43</div></div>
+    <div class="body" style="padding-top:16px;align-items:stretch;text-align:left">
+      <label class="card" style="display:flex;flex-direction:column;gap:4px"><span class="sub">Enter the amount to invest</span><input id="investAmt" inputmode="decimal" style="border:0;font:inherit;font-size:16px;outline:none;width:100%" value="$21,000.00"></label>
+    </div>
+    <div class="foot"><button class="btn" data-go="confirm">Invest</button></div>
+  </section>
+
+  <!-- CONFIRM -->
+  <section data-id="confirm">
+    <div class="nav"><button data-go="invest">←</button><span></span></div>
+    <div class="body" style="gap:18px;padding-top:4px">
+      <h2 style="font-size:18px">Confirmation</h2>
+      <div class="kv" style="align-items:center;text-align:center"><div><small>An investment will be made for the goal</small><strong id="cGoal">Trip</strong></div><div><small>Amount</small><strong id="cAmt">$21,000.00</strong></div><div><small>Strategy</small><strong id="cProf">Patrimonial</strong></div><div><small>Starts</small><strong>Monday 4 September</strong></div></div>
+    </div>
+    <div class="foot"><button class="btn" data-go="done">Invest</button></div>
+  </section>
+
+  <!-- DONE -->
+  <section data-id="done">
+    <div class="nav"><span></span><button data-go="goals">✕</button></div>
+    <div class="body" style="gap:16px;padding-top:20px">
+      <div class="done">✓</div>
+      <h2 style="font-size:18px;font-weight:500">Investment made</h2>
+      <div style="font-size:18px;font-weight:500;color:var(--blue)" id="dAmt">$21,000.00</div>
+      <div class="kv" style="align-items:center;text-align:center"><div><small>An investment will be made for the goal</small><strong id="dGoal">Trip</strong></div><div><small>Strategy</small><strong id="dProf">Patrimonial</strong></div><div><small>Starts</small><strong>Monday 4 September</strong></div></div>
+    </div>
+    <div class="foot"><button class="btn" data-go="goals">Accept</button></div>
+  </section>
+
+  <div class="sheet" id="sheet"><div class="opts" id="sheetOpts"></div></div>
+</div>
+
+<script>
+(function(){
+  // ---- data: the 17 questions exactly as in the XD prototype (translated) ----
+  const Q=[
+    {k:'why',t:'We’d like to know your plans. Why do you want to invest?',s:'e.g. buy a house, buy a car, holidays.',type:'text',v:'Trip'},
+    {k:'target',t:'What final amount do you want to reach for your goal?',type:'money',v:'50000'},
+    {k:'start',t:'How much do you have today to start your investment?',type:'money',v:'21000',dev:'The system must detect the amount the user enters.'},
+    {k:'source',t:'Where does this money come from?',s:'You can select more than one option',type:'multi',opts:['Economic dependant (student, homemaker, disability, etc.)','The work I currently do','Inheritance','Sale of property or goods','Financial investments','Pension or settlement'],v:[1,3]},
+    {k:'wealth',t:'What percentage of your total wealth does this money represent?',s:'(Include property and other assets)',type:'select',opts:['Less than 25%','Between 25% and 50%','Between 50% and 75%','I’d rather not share']},
+    {k:'monthly',t:'How much do you plan to save each month to reach your goal?',type:'money',v:'1000'},
+    {k:'income',t:'What percentage of your total income does this money represent?',type:'select',opts:['I don’t save','Less than 10%','Between 10% and 30%','More than 30%']},
+    {k:'time',t:'How long do you want to take to reach your goal?',type:'select',opts:['Less than 1 year','Between 1 and 3 years','Between 3 and 5 years','More than 5 years']},
+    {k:'priority',t:'In that time, what matters most to you?',type:'select',opts:['Buy a house or car, a trip, school fees, etc.','Preserve my wealth','Grow my wealth','Earn an income','Take advantage of better investment opportunities (speculate)']},
+    {k:'elsewhere',t:'Do you have investments at other financial institutions?',type:'select',opts:['Yes','No']},
+    {k:'elsewherePct',t:()=>`Of the ${money(state.start)} you’re going to invest, what % does it represent of what you have invested at other financial institutions?`,type:'select',opts:['Less than 25%','Between 25% and 50%','Between 50% and 75%','More than 75%'],dev:'The amount entered on screen 3 is shown here.',skipIf:()=>state.elsewhere==='No'},
+    {k:'scenario',t:'Which scenario do you identify with?',type:'select',opts:['I prefer a low return so my investment avoids strong fluctuations','I prefer a moderate return, accepting small negative fluctuations in the short term','I prefer a considerable return, accepting negative fluctuations in the medium term','I prefer a high return, accepting whatever negative fluctuations are needed']},
+    {k:'education',t:'What is your level of education?',type:'select',opts:['Finished secondary school','Finished high school','Degree or technical qualification','Postgraduate']},
+    {k:'occupation',t:'What is your occupation?',type:'select',opts:['Employee','Self-employed / professional','Business owner','Student','Retired','Homemaker','Other']},
+    {k:'work',t:'What best defines your current or past work?',type:'select',opts:['I have never worked in the financial sector','I have worked / work in the financial sector in roles unrelated to investments or finance','I have worked for more than a year in roles related to investments or finance']},
+    {k:'instruments',t:'In the last 2 years, have you invested in any of these instruments?',s:'Only count those where you made 2 or more transactions · You can select more than one option',type:'multi',opts:['Equities','Bonds','Investment funds','CKDs, Fibras, Cerbis','Structured products','Asset-backed securities','SIC instruments (international listings)','Collective investment vehicles (ETFs)','None'],v:[1,3]},
+    {k:'services',t:'Which investment services do you know?',s:'You can select more than one option',type:'multi',opts:['Order execution','Investment advice','Investment management','None'],v:[0,2]},
+  ];
+  const PROFILES=['Conservative','Moderate','Patrimonial','Integral','Professional'];
+  const MIX=[[20,80],[45,55],[70,30],[85,15],[95,5]];
+  const DETAIL={
+    Conservative:'Qualitative: an investor who wants to preserve capital and is not willing to accept losses, even in the short term. Prefers predictable, liquid instruments.\n\nQuantitative: this investor can tolerate annual volatility of up to 100 basis points against the risk-free rate (Cetes).',
+    Moderate:'Qualitative: an investor willing to accept small losses in the short term in exchange for returns slightly above the risk-free rate. Values stability but accepts some variation.\n\nQuantitative: this investor can tolerate annual volatility of up to 300 basis points against the risk-free rate (Cetes).',
+    Patrimonial:'Qualitative: an investor who is willing to take risks in their financial investments and a certain level of losses in the medium term in search of greater growth of their capital. They can commit resources to a medium- to long-term investment, although they may need part of those resources periodically.\n\nThis profile may be associated with people who are more familiar with sophisticated financial terms. It is important that they have adequate diversification covering all these aspects.\n\nQuantitative: this investor can tolerate annual volatility of 700 basis points against the risk-free rate; that is, their investment strategy should be configured so that it is unlikely that, over one year, their investment varies more than 700 basis points above or below the one-year Cetes rate.',
+    Integral:'Qualitative: an investor comfortable with significant losses over the medium term in exchange for higher long-term growth, with resources they will not need for several years.\n\nQuantitative: this investor can tolerate annual volatility of up to 1,200 basis points against the risk-free rate (Cetes).',
+    Professional:'Qualitative: an experienced investor who accepts whatever volatility is needed in pursuit of the highest return, including sustained losses, and understands complex instruments.\n\nQuantitative: this investor can tolerate annual volatility above 1,200 basis points against the risk-free rate (Cetes).'
+  };
+  const state={};
+  Q.forEach(q=>{ if(q.v!==undefined) state[q.k]=Array.isArray(q.v)?q.v.slice():q.v; else state[q.k]=q.type==='multi'?[]:''; });
+  let ceiling=2, chosen=2;
+  const money=n=>'$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  // ---- build question screens ----
+  const host=document.getElementById('qhost');
+  Q.forEach((q,i)=>{
+    const s=document.createElement('section'); s.dataset.id='q'+(i+1);
+    s.innerHTML=`<div class="brand">FINAMEX<small></small></div>
+      <div class="nav"><button data-back>←</button><button data-go="home">✕</button></div>
+      <div class="body"><div class="illo">illustration</div><h2></h2>${q.s?`<p class="sub">${q.s}</p>`:''}<div class="ctl"></div>${q.dev?`<p class="dev">Functionality: ${q.dev}</p>`:''}</div>
+      <div class="foot"><button class="btn" data-next>Continue</button></div>`;
+    const ctl=s.querySelector('.ctl');
+    if(q.type==='text'||q.type==='money'){
+      const inp=document.createElement('input'); inp.className='txt'; inp.id='in_'+q.k;
+      inp.value=q.type==='money'?money(state[q.k]):state[q.k];
+      inp.inputMode=q.type==='money'?'decimal':'text';
+      inp.addEventListener('input',()=>{ state[q.k]=q.type==='money'?inp.value.replace(/[^0-9.]/g,''):inp.value; });
+      inp.addEventListener('blur',()=>{ if(q.type==='money') inp.value=money(state[q.k]); });
+      ctl.appendChild(inp);
+    } else if(q.type==='select'){
+      const b=document.createElement('button'); b.className='sel empty'; b.id='sel_'+q.k; b.innerHTML='<span>Select an option</span><span>▾</span>';
+      b.addEventListener('click',()=>openSheet(q.opts,v=>{ state[q.k]=v; b.classList.remove('empty'); b.firstChild.textContent=v; }));
+      ctl.appendChild(b);
+    } else {
+      const wrap=document.createElement('div'); wrap.className='chk';
+      q.opts.forEach((o,j)=>{ const l=document.createElement('label'); const c=document.createElement('input'); c.type='checkbox'; c.id='ck_'+q.k+'_'+j; c.checked=state[q.k].includes(j);
+        c.addEventListener('change',()=>{ const set=new Set(state[q.k]); c.checked?set.add(j):set.delete(j); state[q.k]=[...set]; });
+        l.append(document.createTextNode(o), c); wrap.appendChild(l); });
+      ctl.appendChild(wrap);
+    }
+    s.querySelector('[data-next]').addEventListener('click',()=>{ let n=i+1; while(n<Q.length && Q[n].skipIf && Q[n].skipIf()) n++; if(n>=Q.length) computeResult(); else go('q'+(n+1)); });
+    s.querySelector('[data-back]').addEventListener('click',()=>{ let p=i-1; while(p>=0 && Q[p].skipIf && Q[p].skipIf()) p--; go(p<0?'welcome':'q'+(p+1)); });
+    host.appendChild(s);
+  });
+
+  // ---- sheet ----
+  const sheet=document.getElementById('sheet'), sheetOpts=document.getElementById('sheetOpts');
+  function openSheet(opts,cb){ sheetOpts.innerHTML=''; opts.forEach(o=>{ const b=document.createElement('button'); b.textContent=o; b.addEventListener('click',()=>{ sheet.classList.remove('on'); cb(o); }); sheetOpts.appendChild(b); }); sheet.classList.add('on'); }
+  sheet.addEventListener('click',e=>{ if(e.target===sheet) sheet.classList.remove('on'); });
+
+  // ---- navigation ----
+  const counter=document.getElementById('counter');
+  function go(id){
+    document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.dataset.id===id));
+    const sec=document.querySelector('section.on'); if(sec){ sec.querySelector('.body')?.scrollTo(0,0); }
+    if(id.startsWith('q')){ const q=Q[+id.slice(1)-1]; const h=sec.querySelector('h2'); h.textContent=typeof q.t==='function'?q.t():q.t; counter.textContent='Question '+id.slice(1)+' of '+Q.length; }
+    else counter.textContent='';
+  }
+  document.addEventListener('click',e=>{ const b=e.target.closest('[data-go]'); if(b){ go(b.dataset.go); } });
+  document.getElementById('restart').addEventListener('click',()=>location.reload());
+
+  // ---- result ----
+  function computeResult(){
+    // simple scoring stand-in: scenario drives most of it, time and work experience nudge. Real matrix unknown.
+    const sc=['I prefer a low','I prefer a moderate','I prefer a considerable','I prefer a high'].findIndex(p=>(state.scenario||'').startsWith(p));
+    let score=sc<0?1:sc; // 0..3
+    if((state.time||'').startsWith('More than 5')) score+=0.6; if((state.time||'').startsWith('Less than 1')) score-=0.6;
+    if((state.work||'').includes('more than a year')) score+=0.5;
+    if((state.instruments||[]).includes(8)) score-=0.4;
+    ceiling=Math.max(0,Math.min(4,Math.round(score+0.5))); chosen=ceiling;
+    renderResult(true); go('result');
+  }
+  const dots=document.getElementById('dots');
+  function renderResult(first){
+    document.getElementById('resIntro').textContent = chosen===ceiling ? 'This is your profile based on the answers you gave.' : 'This is a more conservative profile compared with the profile we got from your answers.';
+    document.getElementById('resName').innerHTML=PROFILES[chosen]+' <span style="font-size:11px;vertical-align:super;color:var(--accent)">ⓘ</span>';
+    dots.innerHTML=PROFILES.map((_,i)=>`<i class="${i===chosen?'cur':''}"></i>`).join('');
+    document.getElementById('stepDown').disabled=chosen===0; document.getElementById('stepUp').disabled=chosen>=ceiling;
+    const [eq,bo]=MIX[chosen]; document.getElementById('bEq').style.width=eq+'%'; document.getElementById('bBo').style.width=bo+'%'; document.getElementById('tEq').textContent=eq+'%'; document.getElementById('tBo').textContent=bo+'%';
+    drawChart('resChart',chosen); document.getElementById('detName').textContent=PROFILES[chosen]; document.getElementById('detText').textContent=DETAIL[PROFILES[chosen]];
+    if(first){ document.querySelectorAll('.ag').forEach(c=>c.checked=false); checkAgree(); }
+  }
+  document.getElementById('stepDown').addEventListener('click',()=>{ chosen=Math.max(0,chosen-1); renderResult(); });
+  document.getElementById('stepUp').addEventListener('click',()=>{ chosen=Math.min(ceiling,chosen+1); renderResult(); });
+  function checkAgree(){ document.getElementById('acceptProfile').disabled=![...document.querySelectorAll('.ag')].every(c=>c.checked); }
+  document.querySelectorAll('.ag').forEach(c=>c.addEventListener('change',checkAgree));
+  document.getElementById('acceptProfile').addEventListener('click',()=>go('sign'));
+  function drawChart(id,level){
+    const svg=document.getElementById(id); const pts=[]; let y=60; const amp=[2,4,7,10,14][level];
+    for(let x=0;x<=345;x+=15){ y=60-(x/345)*(20+level*8)+Math.sin(x/23)*amp+(x<40?x*0.4:0); pts.push(x+','+y.toFixed(1)); }
+    const top=(['+3.2%','+5.8%','+9.65%','+13.4%','+18.9%'])[level], low=(['−0.8%','−2.4%','−5.93%','−9.7%','−15.2%'])[level];
+    svg.innerHTML=`<line x1="0" y1="60" x2="345" y2="60" stroke="#d7dce3" stroke-dasharray="3 4"/><polyline points="${pts.join(' ')}" fill="none" stroke="#2a3b5c" stroke-width="2"/><text x="0" y="56" font-size="10" fill="#6b7686">0%</text><text x="300" y="12" font-size="10" fill="#1f2a3a">${top}</text><text x="296" y="104" font-size="10" fill="#6b7686">${low}</text>`;
+  }
+
+  // ---- signature ----
+  const cv=document.getElementById('sig'), cx=cv.getContext('2d'); let drawing=false, drawn=false;
+  cx.lineWidth=2; cx.lineCap='round'; cx.strokeStyle='#1f2a3a';
+  const pos=e=>{ const r=cv.getBoundingClientRect(); const p=e.touches?e.touches[0]:e; return [(p.clientX-r.left)*cv.width/r.width,(p.clientY-r.top)*cv.height/r.height]; };
+  const down=e=>{ drawing=true; const [x,y]=pos(e); cx.beginPath(); cx.moveTo(x,y); e.preventDefault(); };
+  const move=e=>{ if(!drawing) return; const [x,y]=pos(e); cx.lineTo(x,y); cx.stroke(); drawn=true; document.getElementById('acceptSig').disabled=false; e.preventDefault(); };
+  const up=()=>{ drawing=false; };
+  cv.addEventListener('pointerdown',down); cv.addEventListener('pointermove',move); window.addEventListener('pointerup',up);
+  document.getElementById('clearSig').addEventListener('click',()=>{ cx.clearRect(0,0,cv.width,cv.height); drawn=false; document.getElementById('acceptSig').disabled=true; });
+  document.getElementById('acceptSig').addEventListener('click',()=>{ fillGoal(); go('goals'); });
+
+  // ---- goal screens from state ----
+  function fillGoal(){
+    const start=Number(state.start||0), target=Number(state.target||0), pct=target?Math.min(100,Math.round(start/target*100)):0;
+    const name=state.why||'Goal';
+    document.getElementById('goalsBal').textContent=money(start); document.getElementById('goalBal').textContent=money(start);
+    document.getElementById('gProg').style.width=pct+'%'; document.getElementById('gProg2').style.width=pct+'%'; document.getElementById('gPct').textContent=pct+'%';
+    document.getElementById('gName').textContent=name; document.getElementById('goalName2').textContent=name;
+    document.getElementById('gAmt').textContent=`$${Number(start).toLocaleString()} MXN of $${Number(target).toLocaleString()} ▾`;
+    document.getElementById('haveNow').textContent=`$${Number(start).toLocaleString()} MXN`; document.getElementById('target2').textContent=`$${Number(target).toLocaleString()} MXN`;
+    document.getElementById('investAmt').value=money(start);
+    ['cGoal','dGoal'].forEach(i=>document.getElementById(i).textContent=name); ['cProf','dProf'].forEach(i=>document.getElementById(i).textContent=PROFILES[chosen]);
+    drawChart('goalChart',chosen);
+  }
+  document.getElementById('investAmt').addEventListener('input',e=>{ const v=e.target.value.replace(/[^0-9.]/g,''); document.getElementById('cAmt').textContent=money(v); document.getElementById('dAmt').textContent=money(v); });
+
+  go('home');
+})();
+</script>
+
+</body>
+</html>
